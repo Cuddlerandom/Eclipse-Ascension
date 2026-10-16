@@ -1,0 +1,36 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ECLIPSE – Arena Sandbox</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#28563b;color:white;font:13px system-ui}canvas{width:100%;height:100%;display:block;touch-action:none}header{position:fixed;left:12px;top:calc(8px + env(safe-area-inset-top));pointer-events:none;text-shadow:0 2px 3px #143e29}header b{font:20px Georgia,serif;display:block}.tools{position:fixed;right:calc(10px + env(safe-area-inset-right));top:calc(9px + env(safe-area-inset-top));display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:70vw}button{font:12px system-ui;border:1px solid #9dbda5;background:#163b2e;color:white;border-radius:9px;padding:8px 10px;min-height:36px}.hint{position:fixed;bottom:calc(6px + env(safe-area-inset-bottom));width:100%;text-align:center;text-shadow:0 2px 3px #123524;pointer-events:none;font-size:11px}#msg{position:fixed;bottom:calc(32px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#123a2ee8;padding:6px 12px;border-radius:9px;display:none;white-space:nowrap}</style></head><body><canvas id="arena"></canvas><header><b>ECLIPSE</b>ARENA SANDBOX · GLATTE KURVEN</header><div class="tools"><button id="edit">Wegpunkte: AN</button><button id="add">+ Wegpunkt</button><button id="remove">− Punkt</button><button id="save">Speichern</button><button id="export">Export</button><button id="reset">Reset</button></div><div id="msg"></div><div class="hint">🟢 Höhle · 🔵 Weltenbaum · 🟡 Wegpunkte ziehen · Export für Übergabe</div><script>
+const W=960,H=440,canvas=document.querySelector('canvas'),c=canvas.getContext('2d');
+const initial=[[40,377],[275,373],[515,373],[738,373],[848,370],[891,350],[905,324],[897,301],[861,316],[721,318],[504,313],[275,334],[160,319],[98,327],[65,281],[62,253],[71,236],[130,231],[341,252],[458,254],[549,246],[737,231],[837,243],[889,213],[883,177],[873,152],[837,149],[716,167],[529,181],[332,170],[202,168],[133,190],[115,139],[152,102],[206,121],[367,129],[543,51],[681,51],[921,62]];
+let route=initial.map(a=>a.slice()),show=true,selected=-1,drag=-1,dragType='',changed=false;
+try{let saved=JSON.parse(localStorage.getItem('eclipse-arena-sandbox-smooth-v1'));if(saved?.route?.length>=2&&saved.route.length<200&&saved.route.every(p=>Array.isArray(p)&&p.length===2&&p.every(n=>Number.isFinite(n))))route=saved.route}catch{}
+const $=id=>document.getElementById(id),clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+function notify(s){$('msg').textContent=s;$('msg').style.display='block';clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('msg').style.display='none',2300)}
+function pos(e){let b=canvas.getBoundingClientRect();return [(e.clientX-b.left)/b.width*W,(e.clientY-b.top)/b.height*H]}
+function dist(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1])}
+function drawPath(width,color){
+// Rounded polyline: each bend has a radius limited by its neighbouring segments.
+// Unlike midpoint quadratics, this keeps long straights straight and avoids
+// pulling the road into neighbouring lanes at tight bends.
+c.beginPath();c.moveTo(...route[0]);
+for(let i=1;i<route.length-1;i++){
+ const a=route[i-1],b=route[i],d=route[i+1];
+ const la=Math.hypot(b[0]-a[0],b[1]-a[1]),lb=Math.hypot(d[0]-b[0],d[1]-b[1]);
+ if(la<.01||lb<.01){c.lineTo(...b);continue}
+ const radius=Math.min(23,la*.38,lb*.38);
+ const enter=[b[0]-(b[0]-a[0])/la*radius,b[1]-(b[1]-a[1])/la*radius];
+ const leave=[b[0]+(d[0]-b[0])/lb*radius,b[1]+(d[1]-b[1])/lb*radius];
+ c.lineTo(...enter);c.quadraticCurveTo(b[0],b[1],...leave);
+}
+c.lineTo(...route.at(-1));c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.stroke()}
+function circle(p,r,color,outline='#ecf8e7'){c.beginPath();c.arc(p[0],p[1],r,0,Math.PI*2);c.fillStyle=color;c.fill();c.lineWidth=2.5;c.strokeStyle=outline;c.stroke()}
+function render(){let d=Math.min(devicePixelRatio||1,2),w=Math.round(innerWidth*d),h=Math.round(innerHeight*d);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}c.setTransform(w/W,0,0,h/H,0,0);c.fillStyle='#356846';c.fillRect(0,0,W,H);drawPath(39,'#594933');drawPath(30,'#bea071');if(show){for(let i=1;i<route.length-1;i++){circle(route[i],selected===i?7:5,selected===i?'#ffe77c':'#e9c65a','#665022')}}circle(route[0],22,'#40d366');circle(route.at(-1),22,'#318ef0');requestAnimationFrame(render)}requestAnimationFrame(render);
+canvas.addEventListener('pointerdown',e=>{let p=pos(e),best=1e9;drag=-1;for(let i=0;i<route.length;i++){if(!show&&i!==0&&i!==route.length-1)continue;let dd=dist(p,route[i]);if(dd<best){best=dd;drag=i}}if(best>30){drag=-1;selected=-1;return}selected=drag;canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(drag<0)return;let p=pos(e);route[drag]=[Math.round(clamp(p[0],24,W-24)),Math.round(clamp(p[1],24,H-24))];changed=true});
+function end(){drag=-1}canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
+$('edit').onclick=()=>{show=!show;$('edit').textContent='Wegpunkte: '+(show?'AN':'AUS')};
+$('add').onclick=()=>{let i=selected>=0&&selected<route.length-1?selected:Math.floor((route.length-1)/2);let a=route[i],b=route[i+1];route.splice(i+1,0,[Math.round((a[0]+b[0])/2),Math.round((a[1]+b[1])/2)]);selected=i+1;show=true;$('edit').textContent='Wegpunkte: AN';changed=true;notify('Neuer Wegpunkt eingefügt')};
+$('remove').onclick=()=>{if(selected<=0||selected>=route.length-1){notify('Zuerst gelben Wegpunkt auswählen');return}route.splice(selected,1);selected=-1;changed=true;notify('Wegpunkt entfernt')};
+$('save').onclick=()=>{try{localStorage.setItem('eclipse-arena-sandbox-v1',JSON.stringify({route}));notify('Auf diesem Gerät gespeichert')}catch{notify('Speichern nicht möglich')}};
+$('reset').onclick=()=>{if(!confirm('Alle Änderungen zurücksetzen?'))return;route=initial.map(p=>p.slice());selected=-1;localStorage.removeItem('eclipse-arena-sandbox-v1');notify('Grundriss zurückgesetzt')};
+$('export').onclick=async()=>{let payload=JSON.stringify({project:'ECLIPSE Smaragdwald',version:1,canvas:[W,H],cave:route[0],worldTree:route.at(-1),route});try{await navigator.clipboard.writeText(payload);notify('Koordinaten kopiert – hier einfügen!')}catch{let blob=new Blob([payload],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='eclipse-arena-layout.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('JSON-Datei exportiert')}};
+</script></body></html>
