@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ECLIPSE – echtes Querformat</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#315b40}canvas{width:100%;height:100%;display:block;image-rendering:pixelated}header{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:16px;color:#e6e9cc;font:12px system-ui;letter-spacing:2px;text-shadow:0 2px 4px #07170e;pointer-events:none}header b{display:block;font:24px Georgia,serif}footer{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 6px);width:100%;text-align:center;color:#d4e5ce;font:11px system-ui;text-shadow:0 1px 3px #07170e;pointer-events:none}</style></head><body><canvas id="v"></canvas><header><b>ECLIPSE</b>SMARAGDWALD · QUERFORMAT</header><footer>GRUNDRISS V9 · HÖHLE → WEG → WELTENBAUM</footer><script>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ECLIPSE – echtes Querformat</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#315b40}canvas{width:100%;height:100%;display:block;image-rendering:pixelated}header{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:16px;color:#e6e9cc;font:12px system-ui;letter-spacing:2px;text-shadow:0 2px 4px #07170e;pointer-events:none}header b{display:block;font:24px Georgia,serif}footer{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 6px);width:100%;text-align:center;color:#d4e5ce;font:11px system-ui;text-shadow:0 1px 3px #07170e;pointer-events:none}</style></head><body><canvas id="v"></canvas><header><b>ECLIPSE</b>SMARAGDWALD · QUERFORMAT</header><footer>WELTENBAUM V10 · HÖHLE → WEG → WELTENBAUM</footer><script>
 const cv=document.querySelector('canvas'),out=cv.getContext('2d'),W=960,H=440,buf=document.createElement('canvas');buf.width=W;buf.height=H;const c=buf.getContext('2d');let seed=1729;const rand=()=>{seed=seed*16807%2147483647;return seed/2147483647},R=(a,b)=>a+(b-a)*rand();function polygon(a,col){c.fillStyle=col;c.beginPath();a.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fill()}function stroke(a,col,w){c.strokeStyle=col;c.lineWidth=w;c.lineJoin='round';c.lineCap='round';c.beginPath();a.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke()}function ellipse(x,y,rx,ry,col){c.fillStyle=col;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill()}function rect(x,y,w,h,col){c.fillStyle=col;c.fillRect(x,y,w,h)}
 // Landscape-native coordinates. Every object is placed in the 960x440 world; no portrait remapping.
 function paint(){
@@ -11,10 +11,23 @@ stroke(road,'#244631',39);stroke(road,'#655740',33);stroke(road,'#a28a61',26);st
 for(let i=0;i<190;i++){let x=R(65,919),y=R(44,393);rect(x,y,R(1,3),1,i%2?'#446e47':'#547c51')}
 // Cave at left-bottom; horizontal opening and depth layers
 ellipse(116,373,76,20,'#1a362c');polygon([[39,382],[45,343],[61,323],[88,309],[126,312],[158,326],[182,353],[190,386]],'#314b3e');polygon([[50,346],[68,320],[91,309],[117,315],[91,329],[69,351]],'#70806b');polygon([[130,316],[165,336],[183,362],[171,365]],'#5a7060');polygon([[70,378],[77,351],[92,339],[119,334],[147,348],[157,380]],'#142722');ellipse(115,371,39,26,'#061512');ellipse(115,379,29,18,'#030d0d');for(let i=0;i<52;i++){let x=R(45,180),y=R(316,350);rect(x,y,R(2,5),R(1,3),i%2?'#658d61':'#416e4c')}
-// World Tree in upper-right, fully inside canvas, broad crown with vertical bark
-ellipse(816,70,91,26,'#173a2b');stroke([[817,106],[815,79],[807,44]],'#322920',28);stroke([[817,106],[815,79],[807,44]],'#78543a',16);
-for(let i=0;i<170;i++){let a=R(0,Math.PI*2),q=Math.sqrt(rand()),x=808+Math.cos(a)*105*q,y=48+Math.sin(a)*38*q;ellipse(x,y,R(6,16),R(4,9),['#164a35','#24613f','#387a47','#569552','#7ea75b'][Math.floor(R(0,5))])}
-stroke([[815,99],[824,89],[815,78],[805,89],[815,99]],'#36e6d0',3);
+// World Tree V10 — layered canopy, branching trunk, visible roots, and luminous rune.
+// The tree remains inside the existing destination area; the approved path is unchanged.
+ellipse(811,109,92,22,'#18382c');
+for(let i=0;i<9;i++){let dx=(i-4)*13;stroke([[813,114],[813+dx*.7,123],[813+dx,131]],'#342b24',7);stroke([[813,114],[813+dx*.7,123]],'#806045',3)}
+stroke([[811,116],[813,85],[803,55],[808,31]],'#30271f',37);
+stroke([[811,116],[813,85],[803,55],[808,31]],'#65462f',27);
+stroke([[819,108],[818,85],[809,60]],'#a37a50',8);
+for(let i=0;i<16;i++){let x=799+R(0,24),y=55+R(0,58);stroke([[x,y],[x+R(-6,6),y+R(7,16)]],i%3?'#3d3027':'#ba8b55',R(1,2.5))}
+for(let arm of [[[810,71],[758,41],[727,28]],[[810,67],[854,37],[887,24]],[[806,57],[791,24],[780,13]],[[815,79],[868,63],[908,55]]]){stroke(arm,'#35291f',12);stroke(arm,'#8b6744',5)}
+const leaves=['#123d31','#1d5639','#296a3f','#3a8147','#4e9651','#6aa45a','#8cb569'];
+const clusters=[[734,32,38,19],[773,20,44,24],[813,18,48,25],[861,24,45,25],[892,43,36,20],[755,58,48,24],[813,47,61,29],[862,61,43,24]];
+for(let [cx,cy,rx,ry] of clusters){ellipse(cx+3,cy+5,rx,ry,'#17382d');for(let i=0;i<170;i++){let dx=R(-1,1),dy=R(-1,1);if(dx*dx+dy*dy>1)continue;let idx=Math.max(0,Math.min(6,Math.floor(3-dy*2+R(-1,2))));rect(cx+dx*rx,cy+dy*ry,R(3,8),R(2,5),leaves[idx])}}
+stroke([[811,84],[824,94],[812,109],[799,95],[811,84]],'#0b6669',8);
+stroke([[811,84],[824,94],[812,109],[799,95],[811,84]],'#4df0d5',3);
+rect(809,92,5,8,'#c3fff0');
+for(let [x,y] of [[756,72],[866,81],[891,68]]){stroke([[x,y-12],[x,y]],'#65482c',1);rect(x-3,y,7,8,'#75462b');rect(x-1,y+1,3,5,'#ffce6e')}
+
 }
 paint();function frame(){let d=Math.min(devicePixelRatio||1,2),cw=Math.round(innerWidth*d),ch=Math.round(innerHeight*d);if(cv.width!==cw||cv.height!==ch){cv.width=cw;cv.height=ch}out.imageSmoothingEnabled=false;out.drawImage(buf,0,0,cw,ch);requestAnimationFrame(frame)}requestAnimationFrame(frame);
 </script></body></html>
