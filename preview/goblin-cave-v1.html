@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#28563b">
+<title>ECLIPSE: ASCENSION – Goblinhöhle V1.0</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#10251b;color:#fff;font:14px system-ui,-apple-system,sans-serif}
+canvas{width:100%;height:100%;height:100dvh;display:block;touch-action:none;image-rendering:pixelated}
+.hud{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:calc(env(safe-area-inset-left) + 9px);padding:9px 12px;border:1px solid #c5d6a75a;border-radius:11px;background:#10251bdc;box-shadow:0 4px 16px #0005;pointer-events:none}
+.hud b{display:block;font:600 16px Georgia,serif;letter-spacing:.4px;color:#eadcae}
+.hud small{display:block;margin-top:3px;color:#d4dfc7}
+.tip{position:fixed;right:calc(env(safe-area-inset-right) + 9px);bottom:calc(env(safe-area-inset-bottom) + 8px);padding:7px 10px;border-radius:9px;background:#10251bdc;color:#eceddb;font-size:12px;pointer-events:none}
+@media (orientation:portrait){.tip::after{content:" · Für mehr Details iPhone quer halten"}}
+</style>
+</head>
+<body>
+<canvas id="arena" aria-label="Smaragdwald-Arena mit freigegebener Goblinhöhle"></canvas>
+<div class="hud"><b>ECLIPSE · SMARAGDWALD</b><small>Goblinhöhle V1.0 · Original-PNG · 39 freigegebene Wegpunkte</small></div>
+<div class="tip">Arena 960 × 440 · Ziehe/zoome im Browser nach Bedarf</div>
+<script>
+"use strict";
+const W=960,H=440,canvas=document.getElementById("arena"),ctx=canvas.getContext("2d");
+const initial=[[40,377],[275,373],[515,373],[738,373],[848,370],[891,350],[905,324],[897,301],[861,316],[721,318],[504,313],[275,334],[160,319],[98,327],[65,281],[62,253],[71,236],[130,231],[341,252],[458,254],[549,246],[737,231],[837,243],[889,213],[883,177],[873,152],[837,149],[716,167],[529,181],[332,170],[202,168],[133,190],[115,139],[152,102],[206,121],[367,129],[543,51],[681,51],[921,62]];
+const route=initial.map(p=>p.slice());
+const cave=new Image();
+cave.src=new URL("../assets/environment/goblin-cave-v1.png",location.href).href;
+
+function drawPath(width,color){
+  // Keep the approved arena's rounded-polyline curve construction unchanged.
+  ctx.beginPath();ctx.moveTo(...route[0]);
+  for(let i=1;i<route.length-1;i++){
+    const a=route[i-1],b=route[i],d=route[i+1];
+    const la=Math.hypot(b[0]-a[0],b[1]-a[1]),lb=Math.hypot(d[0]-b[0],d[1]-b[1]);
+    if(la<.01||lb<.01){ctx.lineTo(...b);continue}
+    const radius=Math.min(23,la*.38,lb*.38);
+    const enter=[b[0]-(b[0]-a[0])/la*radius,b[1]-(b[1]-a[1])/la*radius];
+    const leave=[b[0]+(d[0]-b[0])/lb*radius,b[1]+(d[1]-b[1])/lb*radius];
+    ctx.lineTo(...enter);ctx.quadraticCurveTo(b[0],b[1],...leave);
+  }
+  ctx.lineTo(...route.at(-1));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap="round";ctx.lineJoin="round";ctx.stroke();
+}
+function circle(p,r,color,outline="#ecf8e7"){
+  ctx.beginPath();ctx.arc(p[0],p[1],r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle=outline;ctx.stroke();
+}
+function render(){
+  const dpr=Math.min(window.devicePixelRatio||1,2),vw=window.innerWidth,vh=window.innerHeight;
+  const bw=Math.round(vw*dpr),bh=Math.round(vh*dpr);
+  if(canvas.width!==bw||canvas.height!==bh){canvas.width=bw;canvas.height=bh}
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle="#10251b";ctx.fillRect(0,0,vw,vh);
+  const scale=Math.min(vw/W,vh/H),ox=(vw-W*scale)/2,oy=(vh-H*scale)/2;
+  ctx.setTransform(dpr*scale,0,0,dpr*scale,dpr*ox,dpr*oy);
+  ctx.fillStyle="#356846";ctx.fillRect(0,0,W,H);
+
+  // The specified position is the lower-left anchor. This keeps the full
+  // 100×85-unit cave inside the arena: x=40..140, y=292..377.
+  // Preserve the source file and use nearest-neighbor sampling only.
+  const caveH=85,caveW=caveH*cave.naturalWidth/cave.naturalHeight;
+  if(cave.complete&&cave.naturalWidth){
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(cave,40,377-caveH,caveW,caveH);
+  }
+  drawPath(39,"#594933");drawPath(30,"#bea071");
+  circle(route[0],22,"#40d366");circle(route.at(-1),22,"#318ef0");
+  requestAnimationFrame(render);
+}
+cave.onload=()=>requestAnimationFrame(render);
+requestAnimationFrame(render);
+window.addEventListener("resize",()=>{});
+</script>
+</body>
+</html>
