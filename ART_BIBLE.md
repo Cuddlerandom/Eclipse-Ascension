@@ -1,11 +1,11 @@
 # ECLIPSE: ASCENSION — Art Bible V1.0
 
-Status: Freigegeben am 16.10.2026. Kapitel 1: Smaragdwald.
+Status: V1.1 – Perspektive und visuelle Zielqualität aktualisiert am 16.10.2026. Kapitel 1: Smaragdwald.
 
 ## Acht verbindliche Entscheidungen
 
 1. Grafikstil B: Moderne Fantasy-Pixel-Art.
-2. Perspektive A: Klassische Vogelperspektive (Top-down).
+2. Perspektive: Leicht schräge Draufsicht (3/4-Top-down) nach ausdrücklicher Freigabe des visuellen Referenzbilds. Ersetzt die ursprünglich freigegebene direkte Vogelperspektive. Keine isometrische Kachelprojektion erforderlich.
 3. Pixelgrösse B: Mittlere, gut erkennbare Pixel; 32x32-Bodenkacheln als Ausgangsraster.
 4. Farbpalette B: Mystischer Smaragdwald.
 5. Beleuchtung B: Magisches Waldlicht mit sanften Schatten und dezenten türkisen Akzenten.
@@ -45,3 +45,7 @@ Die finale interne Renderauflösung und der Umgang mit dem Seitenverhältnis 960
 ## Nächster Schritt
 
 Goblinhöhle V1 als echtes transparentes PNG entwickeln, in die freigegebene Arena einsetzen und auf dem iPhone prüfen.
+
+## Verbindliches visuelles Ziel: Smaragdwald Visual Target V1.0
+
+Der Game Director hat den zuletzt im Grafikstandard-Chat erzeugten Gesamtstil als Zielqualität ausdrücklich bestätigt: detailreiche moderne Fantasy-Pixel-Art, leicht schräge Draufsicht, üppiger Smaragdwald, atmosphärisches Licht, moosbewachsene Felsen und Höhlen, erkennbare Goblin-Gesichter/Ausrüstung und zurückhaltende türkisfarbene Magie. Alle neuen Assets sollen stilistisch einheitlich sein. Das Referenzbild ist ein Look-Development-Ziel, kein fertiges Spielasset und kein Beleg für echte 26x26-Pixel-Frames. Die Grafik muss als echte PNGs und Sprite-Sheets umgesetzt und auf dem iPhone geprüft werden. Das Referenzbild muss separat als Bilddatei im Repository abgelegt werden, bevor ein stabiler GitHub-Pfad dafür angegeben werden kann. Die freigegebenen 39 Arena-Wegpunkte, Höhlen- und Baumpositionen bleiben unverändert.
