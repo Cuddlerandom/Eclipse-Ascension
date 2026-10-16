@@ -3,6 +3,11 @@ const W=960,H=440,canvas=document.querySelector('canvas'),c=canvas.getContext('2
 const initial=[[40,377],[275,373],[515,373],[738,373],[848,370],[891,350],[905,324],[897,301],[861,316],[721,318],[504,313],[275,334],[160,319],[98,327],[65,281],[62,253],[71,236],[130,231],[341,252],[458,254],[549,246],[737,231],[837,243],[889,213],[883,177],[873,152],[837,149],[716,167],[529,181],[332,170],[202,168],[133,190],[115,139],[152,102],[206,121],[367,129],[543,51],[681,51],[921,62]];
 let route=initial.map(a=>a.slice()),show=true,selected=-1,drag=-1,dragType='',changed=false;
 try{let saved=JSON.parse(localStorage.getItem('eclipse-arena-sandbox-approved-v2'));if(saved?.route?.length>=2&&saved.route.length<200&&saved.route.every(p=>Array.isArray(p)&&p.length===2&&p.every(n=>Number.isFinite(n))))route=saved.route}catch{}
+const cave=new Image();
+const caveStatus=document.createElement('div');caveStatus.style.cssText='position:fixed;bottom:52px;left:10px;padding:6px 9px;background:#102e26;color:white;border-radius:8px;font:12px system-ui;z-index:10';caveStatus.textContent='Goblinhöhle: lädt…';document.body.append(caveStatus);
+cave.onload=()=>{caveStatus.textContent='Goblinhöhle: Original geladen ('+cave.naturalWidth+'×'+cave.naturalHeight+')'};
+cave.onerror=()=>{caveStatus.textContent='Goblinhöhle: Ladefehler – Drive-Bild nicht öffentlich abrufbar'};
+cave.src='https://lh3.googleusercontent.com/d/1AgrVQZiDt_QkPWklpo9Gjf4dh5xXyTYe';
 const $=id=>document.getElementById(id),clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 function notify(s){$('msg').textContent=s;$('msg').style.display='block';clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('msg').style.display='none',2300)}
 function pos(e){let b=canvas.getBoundingClientRect();return [(e.clientX-b.left)/b.width*W,(e.clientY-b.top)/b.height*H]}
@@ -23,7 +28,7 @@ for(let i=1;i<route.length-1;i++){
 }
 c.lineTo(...route.at(-1));c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.stroke()}
 function circle(p,r,color,outline='#ecf8e7'){c.beginPath();c.arc(p[0],p[1],r,0,Math.PI*2);c.fillStyle=color;c.fill();c.lineWidth=2.5;c.strokeStyle=outline;c.stroke()}
-function render(){let d=Math.min(devicePixelRatio||1,2),w=Math.round(innerWidth*d),h=Math.round(innerHeight*d);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}c.setTransform(w/W,0,0,h/H,0,0);c.fillStyle='#356846';c.fillRect(0,0,W,H);drawPath(39,'#594933');drawPath(30,'#bea071');if(show){for(let i=1;i<route.length-1;i++){circle(route[i],selected===i?7:5,selected===i?'#ffe77c':'#e9c65a','#665022')}}circle(route[0],22,'#40d366');circle(route.at(-1),22,'#318ef0');requestAnimationFrame(render)}requestAnimationFrame(render);
+function render(){let d=Math.min(devicePixelRatio||1,2),w=Math.round(innerWidth*d),h=Math.round(innerHeight*d);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}c.setTransform(w/W,0,0,h/H,0,0);c.fillStyle='#356846';c.fillRect(0,0,W,H);drawPath(39,'#594933');drawPath(30,'#bea071');if(show){for(let i=1;i<route.length-1;i++){circle(route[i],selected===i?7:5,selected===i?'#ffe77c':'#e9c65a','#665022')}}if(cave.complete&&cave.naturalWidth){c.imageSmoothingEnabled=false;c.drawImage(cave,route[0][0]-50,route[0][1]-42.5,100,85)}else{circle(route[0],22,'#40d366')}circle(route.at(-1),22,'#318ef0');requestAnimationFrame(render)}requestAnimationFrame(render);
 canvas.addEventListener('pointerdown',e=>{let p=pos(e),best=1e9;drag=-1;for(let i=0;i<route.length;i++){if(!show&&i!==0&&i!==route.length-1)continue;let dd=dist(p,route[i]);if(dd<best){best=dd;drag=i}}if(best>30){drag=-1;selected=-1;return}selected=drag;canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener('pointermove',e=>{if(drag<0)return;let p=pos(e);route[drag]=[Math.round(clamp(p[0],24,W-24)),Math.round(clamp(p[1],24,H-24))];changed=true});
 function end(){drag=-1}canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
