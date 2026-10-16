@@ -1,0 +1,28 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ECLIPSE – Arena Layout V3</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#071b19}canvas{display:block;width:100%;height:100%;image-rendering:pixelated}header{position:fixed;top:calc(10px + env(safe-area-inset-top));left:15px;color:#e3e7c9;font:12px system-ui;letter-spacing:2px;text-shadow:0 2px 4px #000;pointer-events:none}header strong{display:block;font:23px Georgia,serif;letter-spacing:3px}footer{position:fixed;bottom:calc(10px + env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#d3e0c5;font:11px system-ui;text-shadow:0 2px 4px #000;pointer-events:none}</style></head><body><canvas id="scene"></canvas><header><strong>ECLIPSE</strong>SMARAGDWALD · QUERFORMAT</header><footer>HÖHLE → SCHLANGENWEG → WELTENBAUM · ENTWURF V4</footer><script>
+const cv=document.querySelector('canvas'),ctx=cv.getContext('2d');const w=900,h=520,buf=document.createElement('canvas');buf.width=w;buf.height=h;const c=buf.getContext('2d');let seed=93;const rand=()=>{seed=(seed*16807)%2147483647;return seed/2147483647},r=(a,b)=>a+(b-a)*rand();function p(pts,color){c.fillStyle=color;c.beginPath();pts.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.closePath();c.fill()}function line(pts,col,l){c.strokeStyle=col;c.lineWidth=l;c.lineJoin='round';c.lineCap='round';c.beginPath();pts.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.stroke()}function ell(x,y,rx,ry,col){c.fillStyle=col;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill()}function box(x,y,a,b,col){c.fillStyle=col;c.fillRect(x,y,a,b)}
+// Convert original portrait sketch coordinates into a landscape layout while preserving route order.
+const ox=(x)=>65+x*1.57, oy=(y)=>28+y*.65;
+const originalP=p,originalLine=line,originalEll=ell,originalBox=box;
+p=(pts,col)=>originalP(pts.map(([x,y])=>[ox(x),oy(y)]),col);
+line=(pts,col,l)=>originalLine(pts.map(([x,y])=>[ox(x),oy(y)]),col,l*1.05);
+ell=(x,y,rx,ry,col)=>originalEll(ox(x),oy(y),rx*1.57,ry*.65,col);
+box=(x,y,a,b,col)=>originalBox(ox(x),oy(y),a*1.57,Math.max(1,b*.65),col);
+function draw(){c.fillStyle='#0b2625';c.fillRect(0,0,w,h);
+// Raised isometric-ish land slab with visible bevel, entire course seen from elevated oblique view
+p([[15,72],[451,23],[511,103],[505,624],[439,680],[33,659],[5,603]],'#152e26');
+p([[15,54],[452,9],[512,88],[503,605],[440,657],[32,638],[5,587]],'#2a5339');
+p([[22,61],[453,19],[501,96],[493,593],[434,645],[37,628],[15,580]],'#376345');
+for(let i=0;i<3500;i++){let x=r(20,495),y=r(55,621);box(x,y,r(1,3),r(1,3),['#3c6d47','#315b3d','#42724a','#2b5a3d'][Math.floor(r(0,4))])}
+// Path follows exact sketch: start lower-left, right U-turn, left U-turn, right U-turn, left U-turn, then World Tree upper-right
+const route=[[76,580],[135,590],[270,590],[390,587],[436,563],[460,525],[461,489],[450,455],[420,436],[365,432],[250,432],[151,430],[102,417],[78,393],[75,356],[88,329],[123,317],[210,319],[300,318],[396,316],[441,299],[458,275],[457,241],[446,219],[417,207],[341,204],[254,204],[166,207],[112,197],[87,178],[87,151],[106,132],[158,113],[249,114],[343,114],[375,105],[381,77]];
+line(route,'#263a2e',34);line(route,'#6d5d42',28);line(route,'#a18a61',22);line(route,'#b29a6f',14);
+for(let i=0;i<250;i++){let x=r(80,462),y=r(120,585);if(i%2)box(x,y,2,1,'#56794a')}
+// Cave, at bottom left
+ell(76,578,51,22,'#1a3027');p([[26,575],[35,548],[50,526],[79,519],[102,530],[121,554],[126,584],[25,591]],'#394a40');p([[36,551],[60,524],[79,519],[86,536],[67,548]],'#70806b');p([[89,526],[114,547],[125,581],[105,564]],'#5b6c5a');ell(77,572,31,27,'#0c1817');ell(77,581,23,19,'#040d0d');for(let i=0;i<30;i++){let x=r(28,126),y=r(533,569);box(x,y,r(3,7),2,i%2?'#547c56':'#769369')}
+// Tree near upper right; viewed from above with canopy radial and trunk partially visible
+ell(385,88,76,32,'#18372c');line([[384,119],[384,81],[381,51]],'#3a3026',23);line([[385,119],[385,79],[381,49]],'#775337',13);for(let i=0;i<90;i++){let a=r(0,6.28),d=Math.sqrt(rand());let x=381+Math.cos(a)*75*d,y=61+Math.sin(a)*43*d;ell(x,y,r(7,17),r(5,12),['#174734','#266640','#3b8149','#529852','#75a45b'][Math.floor(r(0,5))])}
+line([[384,111],[394,102],[385,91],[375,102],[384,111]],'#31d9c1',3);
+for(let i=0;i<40;i++){let x=r(24,492),y=r(65,620);if((x<130&&y>490)||(x>280&&y<140))continue;ell(x,y,r(2,7),r(2,4),['#234d37','#1d4635','#5a8454'][Math.floor(r(0,3))])}
+}
+draw();function frame(t){let d=Math.min(devicePixelRatio||1,2),cw=Math.round(innerWidth*d),ch=Math.round(innerHeight*d);if(cv.width!==cw||cv.height!==ch){cv.width=cw;cv.height=ch}ctx.imageSmoothingEnabled=false;ctx.fillStyle='#071b19';ctx.fillRect(0,0,cw,ch);let sc=Math.min(cw/w,ch/h),x=(cw-w*sc)/2,y=(ch-h*sc)/2;ctx.drawImage(buf,x,y,w*sc,h*sc);requestAnimationFrame(frame)}requestAnimationFrame(frame);
+</script></body></html>
