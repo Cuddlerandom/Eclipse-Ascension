@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ECLIPSE — Smaragdwald Atmosphäre</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#081815}canvas{width:100%;height:100%;display:block;image-rendering:pixelated;touch-action:none}.label{position:fixed;left:12px;top:calc(env(safe-area-inset-top) + 12px);color:#e3e7bd;font:11px system-ui;letter-spacing:2px;text-shadow:0 2px 4px #06120f;pointer-events:none}.label b{display:block;font:23px Georgia,serif;letter-spacing:3px}.bottom{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 13px);width:100%;text-align:center;color:#b4d1ba;font:11px system-ui;text-shadow:0 2px 4px #000;pointer-events:none}</style></head><body><canvas id="view"></canvas><div class="label"><b>ECLIPSE</b>ASCENSION · SMARAGDWALD</div><div class="bottom">ATMOSPHÄRENSTUDIE · PIXEL-ART · KEIN GAMEPLAY</div><script>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ECLIPSE — Smaragdwald Atmosphäre</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#081815}canvas{width:100%;height:100%;display:block;image-rendering:pixelated;touch-action:none}.label{position:fixed;left:12px;top:calc(env(safe-area-inset-top) + 12px);color:#e3e7bd;font:11px system-ui;letter-spacing:2px;text-shadow:0 2px 4px #06120f;pointer-events:none}.label b{display:block;font:23px Georgia,serif;letter-spacing:3px}.bottom{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 13px);width:100%;text-align:center;color:#b4d1ba;font:11px system-ui;text-shadow:0 2px 4px #000;pointer-events:none}</style></head><body><canvas id="view"></canvas><div class="label"><b>ECLIPSE</b>ASCENSION · SMARAGDWALD</div><div class="bottom">HÖHLE → WALDWEG → WELTENBAUM · V2</div><script>
 const cv=document.getElementById('view'),out=cv.getContext('2d',{alpha:false}),W=480,H=300;const layer=document.createElement('canvas');layer.width=W;layer.height=H;const c=layer.getContext('2d');let seed=1947;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646},R=(a,b)=>a+rnd()*(b-a);
 function rect(x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h))}
 function poly(pts,col){c.fillStyle=col;c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill()}
@@ -8,6 +8,23 @@ const greens=['#102c29','#143b31','#20513a','#2c6642','#3c7947','#548c4e','#6f9d
 function foliage(x,y,rx,ry,light=0){ellipse(x+3,y+5,rx+4,ry+2,'#10271f');for(let i=0;i<320;i++){let dx=R(-1,1),dy=R(-1,1);if(dx*dx+dy*dy>1)continue;let idx=Math.max(0,Math.min(7,Math.floor(2.5-dy*2+light+R(-1,2))));rect(x+dx*rx,y+dy*ry,R(2,6),R(2,4),greens[idx])}}
 function rock(x,y,s){poly([[x-s,y],[x-s*.65,y-s*.55],[x+s*.2,y-s*.8],[x+s,y-s*.35],[x+s*.8,y+s*.45],[x-s*.6,y+s*.4]],'#344e43');poly([[x-s*.65,y-s*.55],[x+s*.2,y-s*.8],[x+s*.15,y-s*.15],[x-s*.35,y]],'#69816a');rect(x-s*.6,y+s*.1,s*.7,2,'#71965b')}
 function fir(x,y,s){stroke([[x,y],[x,y-s]],'#352f25',3);for(let k=0;k<4;k++){let yy=y-s*.83+k*s*.18;poly([[x,yy-s*.25],[x-s*(.18+k*.04),yy+s*.12],[x+s*(.18+k*.04),yy+s*.12]],greens[1+k%3])}}
+
+// Goblin cave: a rocky entrance on the left, with a dark walkable mouth.
+function goblinCave(){
+ ellipse(84,211,91,18,'#152c24');
+ poly([[2,211],[14,173],[36,150],[62,132],[94,139],[125,155],[158,186],[164,217],[0,223]],'#263e35');
+ poly([[13,196],[33,159],[61,140],[84,143],[61,174],[39,192]],'#536b5a');
+ poly([[82,142],[111,155],[145,190],[154,214],[116,197]],'#405548');
+ poly([[30,202],[44,173],[64,159],[93,164],[116,185],[123,217],[26,218]],'#0c1c1b');
+ poly([[42,207],[53,178],[67,168],[89,173],[104,191],[111,218],[42,220]],'#071210');
+ poly([[43,209],[53,181],[63,171],[68,176],[59,195],[57,216]],'#172c25');
+ poly([[92,176],[105,192],[110,214],[100,213]],'#26392c');
+ for(let i=0;i<20;i++){let x=R(10,156),y=R(158,210);if(x>48&&x<111&&y>180)continue;rock(x,y,R(3,9))}
+ for(let i=0;i<25;i++){let x=R(10,145),y=R(145,175);rect(x,y,R(3,8),R(2,4),i%2?'#3e7450':'#63915b')}
+ // weathered stakes and faint cave eyes
+ for(let x of [26,121]){stroke([[x,220],[x,195]],'#48372b',5);poly([[x-3,196],[x,189],[x+3,196]],'#8b7756')}
+ rect(75,199,3,2,'#a4c46c');rect(84,200,3,2,'#a4c46c');
+}
 function worldTree(){
  // Ancient raised roots and stone plinth
  ellipse(340,232,103,26,'#10271e');ellipse(337,224,91,24,'#4b5843');
@@ -41,10 +58,15 @@ function renderStatic(){
  poly([[0,254],[55,246],[108,251],[161,269],[215,282],[280,287],[350,278],[480,289],[480,300],[0,300]],'#0d3c45');
  poly([[0,260],[56,252],[109,257],[162,275],[214,288],[281,293],[351,284],[480,295]],'#267e81');
  for(let i=0;i<140;i++){let x=R(0,W),y=R(254,301);if(x<165&&y<254+x*.12)continue;rect(x,y,R(2,7),1,i%3?'#247078':'#7bc5ad')}
- // path to world tree
- poly([[110,300],[164,276],[214,261],[250,238],[280,222],[318,219],[340,225],[320,238],[286,250],[257,271],[219,288],[180,300]],'#806b4d');
- poly([[145,300],[182,280],[239,252],[282,228],[313,222],[327,224],[292,236],[251,262],[202,287],[177,300]],'#aa8960');
- for(let i=0;i<150;i++){let x=R(180,318),y=R(230,288);rect(x,y,2,1,i%2?'#d2a875':'#705e48')}
+ // Winding continuous road from the cave (left) toward the World Tree (right).
+ // Dark earth edge, lighter compacted centre and irregular stone stepping marks.
+ const roadOuter=[[79,215],[96,228],[116,242],[149,248],[181,238],[199,218],[224,207],[252,212],[271,229],[282,247],[304,253],[329,244],[339,226],[349,227],[350,244],[338,261],[307,273],[278,267],[258,249],[246,231],[227,225],[212,233],[199,252],[181,261],[147,269],[109,262],[86,246],[66,230]];
+ poly(roadOuter,'#4c4634');
+ poly([[78,219],[101,234],[121,249],[151,254],[178,245],[201,226],[223,215],[250,220],[263,236],[278,254],[305,261],[327,252],[339,234],[344,236],[332,257],[306,266],[281,259],[265,243],[249,224],[227,219],[208,229],[188,250],[179,255],[149,263],[116,257],[91,242],[72,225]],'#977e58');
+ stroke([[82,225],[112,250],[151,258],[182,250],[210,222],[240,217],[264,236],[282,257],[308,265],[336,239]],'#b1986b',5);
+ for(let i=0;i<110;i++){let x=R(95,340),y=R(218,269);if(i%4===0)rock(x,y,R(1,3));else rect(x,y,R(1,3),1,i%2?'#c0a479':'#5e5742')}
+ // Stones lining the two sides near the tree entrance
+ for(let i=0;i<12;i++){let x=290+i*4.4;rock(x,274-Math.sin(i*.25)*10,R(2,4))}
  // distant vegetation, ruins, stone bridge
  for(let i=0;i<42;i++){let x=R(0,W),y=R(174,249);if(x>255&&x<447&&y>201)continue;foliage(x,y,R(5,14),R(3,8),-1)}
  for(let i=0;i<13;i++){let x=R(0,240),y=R(185,260);rock(x,y,R(4,12))}
@@ -53,6 +75,7 @@ function renderStatic(){
  // tiny amber lanterns and glowing mushrooms
  for(let p of [[88,219],[228,196],[452,226]]){rect(p[0]-4,p[1],9,17,'#505345');rect(p[0]-2,p[1]-4,5,7,'#ffc46b');rect(p[0]-1,p[1]-5,3,3,'#fff1a8')}
  for(let i=0;i<32;i++){let x=R(0,W),y=R(201,288);rect(x,y,3,2,i%2?'#47cfbd':'#a8d6a0')}
+ goblinCave();
  worldTree();
  // foreground silhouettes
  for(let x of [-7,13,463,485])fir(x,292,65);
