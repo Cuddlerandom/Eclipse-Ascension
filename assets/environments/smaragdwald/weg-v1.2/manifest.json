@@ -1,0 +1,292 @@
+{
+  "version": "1.2",
+  "source": "freigegebene Smaragdwald V1.2 Bildvorlage",
+  "status": "künstlerische Einzelgrafiken; Anschlüsse/Renderer technisch noch nicht validiert",
+  "files": [
+    {
+      "file": "gerade_ns_a.png",
+      "dimensions_px": [
+        152,
+        281
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        42,
+        27,
+        194,
+        308
+      ]
+    },
+    {
+      "file": "gerade_ns_b.png",
+      "dimensions_px": [
+        135,
+        226
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        216,
+        78,
+        351,
+        304
+      ]
+    },
+    {
+      "file": "gerade_ew_a.png",
+      "dimensions_px": [
+        207,
+        190
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        367,
+        115,
+        574,
+        305
+      ]
+    },
+    {
+      "file": "gerade_ew_b.png",
+      "dimensions_px": [
+        186,
+        145
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        581,
+        161,
+        767,
+        306
+      ]
+    },
+    {
+      "file": "kurve_sw_a.png",
+      "dimensions_px": [
+        216,
+        283
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        776,
+        26,
+        992,
+        309
+      ]
+    },
+    {
+      "file": "kurve_sw_b.png",
+      "dimensions_px": [
+        239,
+        279
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        1023,
+        31,
+        1262,
+        310
+      ]
+    },
+    {
+      "file": "kurve_se.png",
+      "dimensions_px": [
+        244,
+        282
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        1267,
+        27,
+        1511,
+        309
+      ]
+    },
+    {
+      "file": "t_s_e_w_a.png",
+      "dimensions_px": [
+        305,
+        301
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        17,
+        343,
+        322,
+        644
+      ]
+    },
+    {
+      "file": "t_s_e_w_b.png",
+      "dimensions_px": [
+        289,
+        294
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        324,
+        353,
+        613,
+        647
+      ]
+    },
+    {
+      "file": "t_s_e_w_c.png",
+      "dimensions_px": [
+        269,
+        291
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        614,
+        356,
+        883,
+        647
+      ]
+    },
+    {
+      "file": "t_s_e_w_d.png",
+      "dimensions_px": [
+        252,
+        294
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        884,
+        352,
+        1136,
+        646
+      ]
+    },
+    {
+      "file": "kreuzung.png",
+      "dimensions_px": [
+        369,
+        361
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        1142,
+        313,
+        1511,
+        674
+      ]
+    },
+    {
+      "file": "endstueck_n_a.png",
+      "dimensions_px": [
+        161,
+        306
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        22,
+        672,
+        183,
+        978
+      ]
+    },
+    {
+      "file": "endstueck_n_b.png",
+      "dimensions_px": [
+        172,
+        309
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        193,
+        672,
+        365,
+        981
+      ]
+    },
+    {
+      "file": "endstueck_n_wurzeln.png",
+      "dimensions_px": [
+        242,
+        314
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        376,
+        671,
+        618,
+        985
+      ]
+    },
+    {
+      "file": "endstueck_n_stein.png",
+      "dimensions_px": [
+        168,
+        315
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        621,
+        670,
+        789,
+        985
+      ]
+    },
+    {
+      "file": "uebergang_a.png",
+      "dimensions_px": [
+        193,
+        280
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        802,
+        698,
+        995,
+        978
+      ]
+    },
+    {
+      "file": "uebergang_b.png",
+      "dimensions_px": [
+        153,
+        282
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        1002,
+        698,
+        1155,
+        980
+      ]
+    },
+    {
+      "file": "uebergang_c.png",
+      "dimensions_px": [
+        192,
+        284
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        1158,
+        698,
+        1350,
+        982
+      ]
+    },
+    {
+      "file": "uebergang_d.png",
+      "dimensions_px": [
+        157,
+        287
+      ],
+      "alpha": "RGBA",
+      "source_rect": [
+        1355,
+        695,
+        1512,
+        982
+      ]
+    }
+  ],
+  "notes": [
+    "Hintergrund war im Quellbild als graues Schachbrett eingebrannt, Alpha wird aus Farb-/Helligkeitsabstand rekonstruiert.",
+    "Abmessungen variieren wegen Originalkomposition; Hauptzentrale muss Anschlusspositionen und Pixel-Skalierung prüfen.",
+    "Einzelgrafiken sind keine garantierten nahtlosen Kacheln."
+  ]
+}

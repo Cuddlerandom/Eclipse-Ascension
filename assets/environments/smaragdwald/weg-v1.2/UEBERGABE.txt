@@ -1,0 +1,3 @@
+ECLIPSE ASCENSION | Smaragdwald Wegsystem V1.2
+20 aus der freigegebenen Bildvorlage separat extrahierte RGBA-PNGs. Originalstil und Dekoration beibehalten.
+Technische Hinweise: Die Schachbrett-Transparenz des generierten Quellbilds wurde per Farbmaske rekonstruiert. Die Ränder können Artefakte enthalten. Die Stücke haben variable Grössen und sind nicht als nahtloses 256er Tilegrid validiert. Hauptzentrale muss die Stücke anhand der bestehenden Arena auf Anschlussgeometrie und Übergänge prüfen. Keine Gameplay-Dateien verändert.
