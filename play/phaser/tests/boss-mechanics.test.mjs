@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { bossName,bossMechanic,bossDamageMultiplier,bossSpeedMultiplier } from '../src/combat/BossMechanics.js';
+for(const wave of [25,50,75,100])assert.ok(bossName(wave));
+assert.equal(bossName(24),null);
+const boss=(wave)=>({type:'boss',bossWave:wave,hp:100,x:0,y:0,abilityAt:0});
+const ally={type:'pluenderer',hp:25,x:40,y:0};
+const tower={kind:0,x:30,y:0};
+assert.equal(bossMechanic(boss(25),100,[boss(25),ally],[]).kind,'warcry');
+assert.equal(bossMechanic(boss(75),100,[],[tower]).kind,'curse');
+assert.equal(bossDamageMultiplier(boss(50),0),.3);
+assert.equal(bossDamageMultiplier(boss(50),7000),1);
+assert.equal(bossSpeedMultiplier(boss(100),0),1.9);
+assert.equal(bossDamageMultiplier(boss(100),6500),.45);
+assert.equal(bossMechanic(boss(100),0,[],[]).kind,'phase');
+console.log('Four boss mechanics tests passed');
