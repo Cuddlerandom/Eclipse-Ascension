@@ -13,7 +13,11 @@ assert.ok(plundererHealth(100)<=65);
 for(let w=2;w<=100;w++)assert.ok(plundererHealth(w)>=plundererHealth(w-1));
 console.log('Plunderer health thresholds passed');
 
-for(let w=1;w<=25;w++)assert.equal(enemyHealthMultiplier(w,'schildtraeger'),1);
+for(let w=1;w<=5;w++)assert.equal(enemyHealthMultiplier(w,'schildtraeger'),1);
+assert.ok(enemyHealthMultiplier(10,'spaeher')>1);
+assert.ok(enemyHealthMultiplier(20,'spaeher')>enemyHealthMultiplier(10,'spaeher'));
+assert.ok(enemyHealthMultiplier(25,'schildtraeger')>1.4);
+assert.ok(enemySpeedMultiplier(15,'spaeher')>1);
 for(const w of [26,50,51,75,76,100])assert.ok(enemyHealthMultiplier(w,'spaeher')>=1);
 assert.ok(enemyHealthMultiplier(100,'schildtraeger')>enemyHealthMultiplier(75,'schildtraeger'));
 assert.ok(enemyHealthMultiplier(100,'schamane')>enemyHealthMultiplier(50,'schamane'));
