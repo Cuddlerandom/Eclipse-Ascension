@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import { STARTING_GOLD, HERO_BASE_COSTS, heroPurchaseCost, upgradeCost, waveCompletionBonus } from '../src/combat/Economy.js';
+assert.equal(STARTING_GOLD,200);
+assert.deepEqual(HERO_BASE_COSTS,[125,115,165]);
+assert.equal(heroPurchaseCost(0,0),125);
+assert.equal(heroPurchaseCost(0,3),230);
+assert.equal(upgradeCost(1),80);
+assert.equal(upgradeCost(4),360);
+assert.equal(upgradeCost(5),null);
+assert.equal(waveCompletionBonus(1),35);
+assert.equal(waveCompletionBonus(6),40);
+assert.equal(waveCompletionBonus(100),130);
+for(let w=2;w<=100;w++) assert.ok(waveCompletionBonus(w)>=waveCompletionBonus(w-1));
+console.log('Economy tests passed');
