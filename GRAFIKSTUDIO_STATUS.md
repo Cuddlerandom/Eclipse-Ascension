@@ -5,6 +5,9 @@
 **Wichtig:** Vor neuen Entwürfen diese Datei und die freigegebenen Designvorgaben prüfen. Bei Widersprüchen Rückfrage an die Hauptzentrale/Projektleitung.
 
 
+### Phaser-Engine-Vergleich V0.1 – 18.10.2026
+**Neu auf `main`, Commit `b55eb83`:** Isolierter Phaser-3-Prototyp unter https://cuddlerandom.github.io/Eclipse-Ascension/play/phaser-warrior-test.html (Datei `play/phaser-warrior-test.html`). Phaser 3.90.0 via jsDelivr; lädt **dieselben 16 Original-Krieger-Sheets** mit 160×160-Frames; separate Testszene mit vereinfachtem bisherigen Weg, automatisch laufendem Krieger, Steuerung für Idle/Run/Attack und vier Richtungen. **Zweck:** Vergleich der Sprite-Darstellung/Animation im Phaser-Renderer gegen unseren bisherigen Canvas-Renderer. **Kein Engine-Wechsel beschlossen; kein Ersatz der Arena; keine Sprite-Reparatur.** Live-Browser-/iPhone-Test und Leistungsbewertung stehen noch aus. Werkstatt soll die Grafiken weiterhin mit dem Sprite Inspector frameweise prüfen; falls derselbe Bilddefekt in Phaser auftritt, ist das ein starkes Indiz für den Asset-Inhalt (nicht endgültiger Beweis). Kein neues Design ohne Freigabe.
+
 ## AKTUELLER ARBEITSSTAND & NÄCHSTE SCHRITTE – 18.10.2026 (verbindliche Kurzfassung)
 
 **Priorität P0: Krieger Level 1 V1.0 – fehlende/versetzte Teile in Idle und Attack.** Die Projektleitung beobachtet im stark gezoomten iPhone-Spielbild, dass im Idle Teile der Figur unvollständig wirken und während des Angriffs Körper-/Schildteile scheinbar verschwinden bzw. jenseits einer unsichtbaren rechteckigen Grenze wieder erscheinen. Eine zusätzliche Zoomaufnahme wurde besprochen. **Der Effekt ist ernst zu nehmen; die genaue Ursache ist noch nicht bewiesen.** Das ist nicht automatisch ein FPS-Problem, und zusätzliche Zwischenbilder allein beheben ihn nicht.
