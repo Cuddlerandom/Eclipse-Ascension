@@ -4,6 +4,19 @@
 **Verantwortung:** Hauptzentrale 🛠️ pflegt diesen Status bei relevanten Gameplay-/Designänderungen.  
 **Wichtig:** Vor neuen Entwürfen diese Datei und die freigegebenen Designvorgaben prüfen. Bei Widersprüchen Rückfrage an die Hauptzentrale/Projektleitung.
 
+
+## AKTUELLE ÜBERGABE AN DIE GRAFIKWERKSTATT – 18.10.2026
+
+**Verbindlich ab jetzt:** Die Projektleitung hat die Arbeit direkt auf `main` freigegeben. Separater Testbranch ist für normale Iterationen nicht mehr erforderlich. Jede Änderung in einem nachvollziehbaren Commit; bei Problemen per Revert zurück. Testspielstände müssen derzeit nicht erhalten bleiben. **Nur Repository `Cuddlerandom/Eclipse-Ascension` bearbeiten, nicht `Cuddlerandom/eclipse`.**
+
+**Krieger Level 1 V1.0 – technischer Stand:** Alle 16 originalen Sprite-Sheets (vier Blickrichtungen × Idle/Run/Attack/Hit) sind in `assets/heroes/krieger/level1-v1/` einsortiert. Dateimuster: `sheet_<richtung>_<animation>.png`, Richtungen `vorne`, `hinten`, `links`, `rechts`; Animationen `idle`, `run`, `attack`, `hit`. Der Arena-Renderer referenziert diesen Ordner; erwartete Frames 160×160, Fussanker (80,144). Das bisher zusätzlich im `assets/`-Root liegende ZIP wurde als redundante Kopie aus dem aktuellen Stand entfernt (Git-Historie bleibt erhalten). **Die tatsächliche Darstellung, Sheet-Ausrichtung, Alpha-Kanten, Animationsübergänge und der iPhone-Browsertest sind noch nicht abschliessend geprüft; daher keine endgültige grafische Abnahme behaupten.** Die Hit-Animation ist als Asset vorhanden, wird ohne Heldenschadensmechanik derzeit nicht regulär ausgelöst. Bestehendes Gameplay nicht ohne separate Absprache ändern.
+
+**Dateiordnung für neue Grafiken:** `assets/heroes/<klasse>/<stufe-version>/` für Helden; `assets/environments/<gebiet>/<set-version>/` für Umgebungen. Keine neuen Sprite-Sheets lose in `assets/` hochladen. Übergaben mit eindeutigem Versionsnamen und ggf. Manifest; nur Originalgrafiken, keine vereinfachten Ersatzbilder. Änderungen an Renderer und Dateipfaden gemeinsam committen.
+
+**Aktuelle Gameplay-Basis:** V0.17 (100 Wellen, 150 Startgold, 20 Leben, freie Heldenplatzierung, Krieger 100 / Bogenschütze 90 / Magier 130 Grundkosten; Goblin-Killgold 1/2/5/6/8/10 nach Typ). Frühere Abschnitte dieses Dokuments sind chronologische Historie und enthalten teils überholte Werte. Dieser aktuelle Abschnitt und die tatsächlichen Spieldateien haben für den heutigen Stand Vorrang.
+
+**An Grafikwerkstatt:** Bitte diese Übergabe als aktuelle technische Rückmeldung lesen. Für Krieger Level 1 zunächst vier Richtungen, Attack-Silhouette und saubere Animationen prüfen. Eventuelle konkrete Grafikfehler mit Dateiname, Richtung, Animation und Frame melden; keine Designfreigaben eigenmächtig ändern.
+
 ## Zweck und Zusammenarbeit
 Diese Datei verbindet die technische Entwicklung der spielbaren Arena mit der Grafikwerkstatt. Sie ist **kein automatischer Nachrichtendienst**. Das Grafikstudio soll sie vor neuen Arbeiten aktiv lesen. Die Hauptzentrale aktualisiert sie bei Änderungen, die Grafiken oder Animationen beeinflussen. **Keine bestehende Designfreigabe wird dadurch ersetzt.**
 
