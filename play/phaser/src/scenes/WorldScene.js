@@ -109,7 +109,7 @@ for(const tower of this.towers){
   const skill=WARRIOR_SKILLS.titan,targets=warriorSkillTargets(this.enemies,cx,cy,skill);
   if(warriorSkillReady(tower.level,time,tower.titanAt,targets,skill)){
    for(const e of targets){e.hp-=calculateDamage(skill.baseDamage,tower.level,e.type)*bossDamageMultiplier(e,time);e.blockedUntil=Math.max(e.blockedUntil??0,time+skill.stunMs)}
-   this.addSkillPulse(cx,cy,skill.radius,0xff7848);tower.titanAt=time+skill.cooldown;
+   this.playTitanUltimate(cx,cy,skill.radius,targets.length);tower.titanAt=time+skill.cooldown;
   }
  }
  if(tower.level<4||time<tower.ultimateAt)continue;
@@ -124,6 +124,23 @@ for(const tower of this.towers){
   this.addSkillPulse(center.x,center.y,150,0xce90ff);tower.ultimateAt=time+16000;
  }
 }
+}
+playTitanUltimate(x,y,radius,count){
+ const duration=650;
+ const ring=this.add.circle(x,y,12,0xff6d35,.12).setStrokeStyle(9,0xffd47d,.95).setDepth(13);
+ const inner=this.add.circle(x,y,24,0xffd37a,.42).setDepth(12);
+ const impact=this.add.text(x,y-110,'⚔ ZORN DES TITANEN',{font:'bold 22px system-ui',color:'#ffe1a0',stroke:'#552311',strokeThickness:5}).setOrigin(.5).setDepth(15);
+ const sparks=[];
+ for(let i=0;i<12;i++){
+  const angle=i*Math.PI/6;
+  const spark=this.add.circle(x,y,5, i%2?0xffae52:0xffedac,.95).setDepth(14);
+  sparks.push({spark,angle});
+ }
+ this.tweens.add({targets:ring,radius:radius,alpha:0,lineWidth:2,duration,ease:'Cubic.Out'});
+ this.tweens.add({targets:inner,radius:radius*.72,alpha:0,duration:duration*.8,ease:'Quad.Out'});
+ this.tweens.add({targets:impact,y:y-145,alpha:0,duration:950,ease:'Sine.Out',onComplete:()=>impact.destroy()});
+ for(const {spark,angle} of sparks)this.tweens.add({targets:spark,x:x+Math.cos(angle)*radius,y:y+Math.sin(angle)*radius,alpha:0,scale:.3,duration:duration,ease:'Cubic.Out',onComplete:()=>spark.destroy()});
+ this.time.delayedCall(duration,()=>{ring.destroy();inner.destroy()});
 }
 addSkillPulse(x,y,radius,color){
  const pulse=this.add.circle(x,y,radius,color,.17).setStrokeStyle(3,color,.8).setDepth(9);
