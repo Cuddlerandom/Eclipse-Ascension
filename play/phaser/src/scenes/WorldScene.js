@@ -1,6 +1,6 @@
 import { waveRoster } from '../combat/WaveConfig.js';
 import { bossName, bossMechanic, bossDamageMultiplier, bossSpeedMultiplier } from '../combat/BossMechanics.js';
-import { plundererHealth, enemyHealthMultiplier, enemySpeedMultiplier } from '../combat/EnemyBalance.js';
+import { plundererHealth, enemyHealthMultiplier, enemySpeedMultiplier } from '../combat/EnemyBalance.js?v=18';
 import { STARTING_GOLD, heroPurchaseCost, upgradeCost, waveCompletionBonus, enemyGoldReward } from '../combat/Economy.js';
 import { selectTarget, calculateDamage, nextAttackAt } from '../combat/CombatCore.js';
 import { healingAction, stunAction, movementMultiplier } from '../combat/GoblinAbilities.js';
