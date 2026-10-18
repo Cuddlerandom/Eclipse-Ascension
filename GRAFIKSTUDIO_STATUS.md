@@ -11,7 +11,7 @@ Diese Datei verbindet die technische Entwicklung der spielbaren Arena mit der Gr
 - Repository: `Cuddlerandom/Eclipse-Ascension` (**nicht** `Cuddlerandom/eclipse`).
 - Spielbare Arena: [Arena auf GitHub Pages](https://cuddlerandom.github.io/Eclipse-Ascension/play/arena-sandbox-user-layout.html).
 - Technischer Prototyp: **Gameplay V0.10**. Grafikplatzhalter sind vorübergehend; fertige freigegebene Originalgrafiken sollen nicht durch vereinfachte Neuentwürfe ersetzt werden.
-- Welt: 2400 × 1600 Welteinheiten, verschiebbare Kamera und Zoom auf Mobilgeräten, gewundener Gegnerweg, **12 feste Helden-Einsatzpositionen**.
+- Welt: 2400 × 1600 Welteinheiten, verschiebbare Kamera und Zoom auf Mobilgeräten, gewundener Gegnerweg, **freie Heldenplatzierung ohne feste Obergrenze**.
 - Verteidigung: 20 Startleben, 180 Startgold; 5 Wellen im derzeitigen Prototyp.
 - Prototyp V0.4: Krieger-Bewegung und Zielpriorisierung wurden vom Projektleiter auf dem iPhone als funktionierend bestätigt.
 - Prototyp V0.5: Goblin-Plünderer als Basistyp implementiert. **Gameplay V0.10:** Goblin-Späher und Schildträger integriert; Browser-Endtest V0.7 noch ausstehend.
@@ -104,3 +104,5 @@ Dieser Standard gilt für die Vorbereitung neuer Exporte. Bestehende freigegeben
 - **2026-10-18 Schamane:** Goblin-Schamane im Gameplay integriert: 80 HP, Tempo 70, 30 Gold, Unterstützung; alle 5 Sekunden +30 HP für genau einen anderen verletzten Goblin im Radius 180, Priorität niedrigster HP-Prozentsatz, keine Selbstheilung, keine Überheilung. Ab Welle 1 testbar. Vorläufiger visueller Platzhalter, keine Originalgrafik-Freigabe. Commit 58c82af; Browser-Test ausstehend.
 
 - **2026-10-18:** Animationsregel verbindlich präzisiert: Sprengmeister betäubt ausschliesslich Fernkämpfer; Krieger/Nahkämpfer immun. Keine Stun-Frames für Nahkämpfer produzieren.
+
+- **2026-10-18 Gameplay V0.12:** Freie Heldenplatzierung umgesetzt: keine 12 festen Einsatzplätze und keine zahlenmässige Heldenobergrenze; Begrenzung durch Gold, Abstand zu Weg (mindestens 100 Welteinheiten von Weg-Mittellinie), andere gebaute Helden (mindestens 95 Einheiten Mittelpunktabstand) und Kartenrand. Antippen freier Fläche öffnet Heldenauswahl; gebaute Helden antippen für Upgrade/Zielauswahl. Krieger-Patrouille, Fernkämpfer und Goblinfähigkeiten bleiben erhalten. Commit 2a042e5; Browser-Test noch ausstehend. Für Grafikwerkstatt: keine zusätzlichen festen Heldenplatz-Assets mehr produzieren.
