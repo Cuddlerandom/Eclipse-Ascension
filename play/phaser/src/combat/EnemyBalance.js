@@ -20,6 +20,7 @@ export function enemyHealthMultiplier(wave,type) {
 export function enemySpeedMultiplier(wave,type) {
  if(!Number.isInteger(wave)||wave<1||wave>100)throw new RangeError('Wave must be 1–100');
  if(wave<=5)return 1;
- const boost=Math.min(.16,(wave-5)*.0017);
- return type==='spaeher'?1+boost*1.3:1+boost;
+ // +12% immediately after the tutorial; ramps to +32% by wave 100.
+ const boost=.12+Math.min(.20,(wave-6)*.00215);
+ return type==='spaeher'?1+boost*1.1:1+boost;
 }
