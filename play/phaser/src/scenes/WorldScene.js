@@ -1,3 +1,4 @@
+import { warriorTarget, warriorStep, warriorDirection } from '../combat/WarriorBehavior.js?v=19';
 import { waveRoster } from '../combat/WaveConfig.js';
 import { bossName, bossMechanic, bossDamageMultiplier, bossSpeedMultiplier } from '../combat/BossMechanics.js';
 import { plundererHealth, enemyHealthMultiplier, enemySpeedMultiplier } from '../combat/EnemyBalance.js?v=18';
@@ -41,7 +42,31 @@ placeTower(kind){const spot=this.pendingSpot;if(!spot||!this.canPlace(spot.x,spo
 removeEnemy(e){const index=this.enemies.indexOf(e);if(index<0)return;e.body.destroy();e.label.destroy();e.bar.destroy();this.enemies.splice(index,1)}
 update(time,delta){const dt=Math.min(delta,50)/1000;if(this.gameOver)return;if(this.spawns&&time>=this.nextSpawn){this.spawnGoblin();this.spawned++;this.spawns--;this.nextSpawn=time+(this.wave<=5?1250:900)}
 for(const e of [...this.enemies]){if(e.type==='boss')this.applyBossMechanic(e,time);const heal=healingAction(e,this.enemies,time);if(heal){heal.target.hp=Math.min(heal.target.maxHp,heal.target.hp+heal.amount);e.healAt=heal.nextAt;this.effectLine(e.x,e.y,heal.target.x,heal.target.y,0x6effaa,300)}const stun=stunAction(e,this.towers,time);if(stun){stun.target.stunnedUntil=stun.stunnedUntil;stun.target.stunImmuneUntil=stun.immuneUntil;e.bombAt=stun.nextAt;this.effectLine(e.x,e.y,stun.target.x,stun.target.y,0xffbc4e,300)}const target=route[e.index],dx=target[0]-e.x,dy=target[1]-e.y,dist=Math.hypot(dx,dy),step=time<(e.blockedUntil??0)?0:e.speed*movementMultiplier(e,this.enemies)*(time<(e.warcryUntil??0)?1.4:1)*bossSpeedMultiplier(e,time)*dt;if(dist<=step){e.x=target[0];e.y=target[1];e.index++;if(e.index>=route.length){this.removeEnemy(e);this.lives--;this.refreshHud();if(this.lives<=0){this.gameOver=true;this.active=false;document.querySelector('#status').textContent='Verloren – Neustart versuchen'}continue}}else{e.x+=dx/dist*step;e.y+=dy/dist*step}e.body.setPosition(e.x,e.y);e.label.setPosition(e.x,e.y-(e.type==='boss'?74:42));e.bar.setPosition(e.x-24,e.y-30).setScale(Math.max(0,e.hp/e.maxHp),1)}
-for(const tower of this.towers.filter(t=>t.kind===0)){const hero=tower.hero,home=tower.home;const candidates=this.enemies.filter(e=>e.hp>0&&Math.hypot(e.x-home.x,e.y-home.y)<classes[0].range);const target=candidates.sort((a,b)=>Math.hypot(a.x-hero.x,a.y-hero.y)-Math.hypot(b.x-hero.x,b.y-hero.y))[0];let moving=false;if(target){const dx=target.x-hero.x,dy=target.y-(hero.y-55),dist=Math.hypot(dx,dy);tower.dir=Math.abs(dx)>Math.abs(dy)?dx>0?'rechts':'links':dy>0?'vorne':'hinten';if(dist>65){const step=Math.min(dist-65,235*dt);hero.x+=dx/dist*step;hero.y+=dy/dist*step;moving=true}else if(time>=tower.nextAttack&&time>=tower.stunnedUntil){const key=tower.dir+'_attack';if(this.anims.exists(key))hero.play(key,true);tower.mode='attack';tower.nextAttack=time+800;target.hp-=calculateDamage(classes[0].damage,tower.level,target.type)*bossDamageMultiplier(target,time);const flash=this.add.circle(target.x,target.y,30,0xffd16b,.65).setDepth(12);this.time.delayedCall(140,()=>flash.destroy())}}else{const dx=home.x-hero.x,dy=home.y-hero.y,dist=Math.hypot(dx,dy);if(dist>3){tower.dir=Math.abs(dx)>Math.abs(dy)?dx>0?'rechts':'links':dy>0?'vorne':'hinten';const step=Math.min(dist,185*dt);hero.x+=dx/dist*step;hero.y+=dy/dist*step;moving=true}}if(moving){const key=tower.dir+'_run';if(this.anims.exists(key)&&hero.anims.currentAnim?.key!==key)hero.play(key,true);tower.mode='run'}else if(time>=tower.nextAttack&&tower.mode!=='idle'){const key=tower.dir+'_idle';if(this.anims.exists(key))hero.play(key,true);tower.mode='idle'}}
+for(const tower of this.towers.filter(t=>t.kind===0)){
+ const hero=tower.hero,home=tower.home;
+ const target=warriorTarget(home,hero,this.enemies);
+ const stunned=time<tower.stunnedUntil;
+ const step=warriorStep(hero,home,target,dt,stunned);
+ const tx=target?target.x:home.x,ty=target?target.y+55:home.y;
+ if(Math.hypot(tx-hero.x,ty-hero.y)>1)tower.dir=warriorDirection(tx-hero.x,ty-hero.y);
+ hero.x=step.x;hero.y=step.y;
+ if(step.moving){
+  const key=tower.dir+'_run';
+  if(this.anims.exists(key)&&hero.anims.currentAnim?.key!==key)hero.play(key,true);
+  tower.mode='run';
+ }else if(step.attacking&&!stunned&&time>=tower.nextAttack){
+  const key=tower.dir+'_attack';
+  if(this.anims.exists(key))hero.play(key,true);
+  tower.mode='attack';tower.nextAttack=time+800;
+  target.hp-=calculateDamage(classes[0].damage,tower.level,target.type)*bossDamageMultiplier(target,time);
+  const flash=this.add.circle(target.x,target.y,30,0xffd16b,.65).setDepth(12);
+  this.time.delayedCall(140,()=>flash.destroy());
+ }else if(!stunned&&(!step.attacking||time>=tower.nextAttack)&&tower.mode!=='idle'){
+  const key=tower.dir+'_idle';
+  if(this.anims.exists(key))hero.play(key,true);
+  tower.mode='idle';
+ }
+}
 this.runAutoSkills(time);
 for(const tower of this.towers.filter(t=>t.kind!==0)){const cl=classes[tower.kind];const target=selectTarget(tower,this.enemies,cl.range,route);tower.target=target;if(!target||time<tower.stunnedUntil||time<tower.cd)continue;tower.cd=nextAttackAt(time,cl.rate);const damage=calculateDamage(cl.damage,tower.level,target.type,tower.kind===2);target.hp-=damage*bossDamageMultiplier(target,time);if(cl.splash)for(const other of this.enemies)if(other!==target&&other.hp>0&&Math.hypot(other.x-target.x,other.y-target.y)<cl.splash)other.hp-=damage*.55*bossDamageMultiplier(other,time);this.effectLine(tower.x,tower.y,target.x,target.y,cl.color,130);if(target.hp<=0){tower.target=null;tower.cd=nextAttackAt(time,cl.rate,true)}}
 for(const e of [...this.enemies])if(e.hp<=0){this.gold+=enemyGoldReward(goblins[e.type].gold,this.wave,e.type==='boss');this.removeEnemy(e);this.kills++;this.refreshHud()}
