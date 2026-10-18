@@ -27,6 +27,7 @@ jobs:
           node --check play/phaser/src/combat/Economy.js
           node --check play/phaser/src/combat/EnemyBalance.js
           node --check play/phaser/src/combat/BossMechanics.js
+          node --check play/phaser/src/combat/WarriorBehavior.js
       - name: Combat target, damage and cooldown tests
         run: node play/phaser/tests/combat-core.test.mjs
       - name: Goblin ability tests
@@ -37,6 +38,8 @@ jobs:
         run: node play/phaser/tests/economy.test.mjs
       - name: Enemy health thresholds
         run: node play/phaser/tests/enemy-balance.test.mjs
+      - name: Warrior behaviour tests
+        run: node play/phaser/tests/warrior-behavior.test.mjs
       - name: Boss mechanics tests
         run: node play/phaser/tests/boss-mechanics.test.mjs
       - name: Install browser test dependencies
