@@ -2,7 +2,7 @@ const W=2400,H=1600;
 const route=[[130,1370],[480,1370],[480,1080],[930,1080],[930,1350],[1500,1350],[1500,920],[1910,920],[1910,560],[1330,560],[1330,280],[2200,280]];
 const dirs=['vorne','hinten','links','rechts'],motions={idle:[6,7],run:[8,11],attack:[8,12],hit:[4,8]};
 export class WorldScene extends Phaser.Scene{
-constructor(){super('WorldScene');this.touches=new Map();this.lastPinch=null;this.enemies=[];this.wave=0;this.lives=20;this.kills=0;this.spawns=0;this.nextSpawn=0;this.nextAttack=0;this.currentDir='vorne'}
+constructor(){super('WorldScene');this.touches=new Map();this.lastPinch=null;this.enemies=[];this.wave=0;this.lives=20;this.kills=0;this.spawns=0;this.nextSpawn=0;this.nextAttack=0;this.currentDir='vorne';this.home={x:750,y:950};this.heroMode='idle'}
 preload(){for(const d of dirs)for(const motion of Object.keys(motions))this.load.spritesheet(d+'_'+motion,'../../assets/heroes/krieger/level1-v1/sheet_'+d+'_'+motion+'.png',{frameWidth:160,frameHeight:160});this.load.on('loaderror',f=>document.querySelector('#status').textContent='Ladefehler: '+f.key)}
 create(){
 const g=this.add.graphics();g.fillStyle(0x31543a).fillRect(0,0,W,H);
@@ -12,7 +12,7 @@ g.fillStyle(0x1b3829);for(let i=0;i<90;i++){const x=(i*431+37)%W,y=(i*739+59)%H;
 for(const d of dirs)for(const [motion,[frames,fps]]of Object.entries(motions))if(this.textures.exists(d+'_'+motion))this.anims.create({key:d+'_'+motion,frames:this.anims.generateFrameNumbers(d+'_'+motion,{start:0,end:frames-1}),frameRate:fps,repeat:motion==='attack'||motion==='hit'?0:-1});
 this.hero=this.add.sprite(750,950,this.textures.exists('vorne_idle')?'vorne_idle':'__MISSING').setOrigin(.5,.9).setDepth(10).setScale(1.2);
 if(this.anims.exists('vorne_idle'))this.hero.play('vorne_idle');else document.querySelector('#status').textContent='FEHLER: Kriegergrafik fehlt – Asset-Pfad prüfen';
-this.add.circle(750,895,190,0x89e9b3,.04).setStrokeStyle(2,0x89e9b3,.27).setDepth(1);
+this.rangeCircle=this.add.circle(750,895,190,0x89e9b3,.04).setStrokeStyle(2,0x89e9b3,.27).setDepth(1);
 this.cameras.main.setBounds(0,0,W,H);this.input.addPointer(2);
 this.input.on('pointerdown',p=>{this.touches.set(p.id,{x:p.x,y:p.y});this.lastPinch=null});
 this.input.on('pointerup',p=>{this.touches.delete(p.id);this.lastPinch=null});
@@ -28,9 +28,21 @@ spawnGoblin(){const x=route[0][0],y=route[0][1];const body=this.add.circle(x,y,2
 removeEnemy(e){e.body.destroy();e.label.destroy();this.enemies.splice(this.enemies.indexOf(e),1)}
 update(time,delta){const dt=Math.min(delta,50)/1000;if(this.spawns&&time>=this.nextSpawn){this.spawnGoblin();this.spawns--;this.nextSpawn=time+750}
 for(const e of [...this.enemies]){const target=route[e.index],dx=target[0]-e.x,dy=target[1]-e.y,dist=Math.hypot(dx,dy),step=e.speed*dt;if(dist<=step){e.x=target[0];e.y=target[1];e.index++;if(e.index>=route.length){this.removeEnemy(e);this.lives--;this.refreshHud();continue}}else{e.x+=dx/dist*step;e.y+=dy/dist*step}e.body.setPosition(e.x,e.y);e.label.setPosition(e.x,e.y-39)}
-const close=this.enemies.filter(e=>Math.hypot(e.x-this.hero.x,e.y-(this.hero.y-55))<190).sort((a,b)=>b.index-a.index);
-if(close.length&&time>=this.nextAttack){const e=close[0],dx=e.x-this.hero.x,dy=e.y-this.hero.y;this.currentDir=Math.abs(dx)>Math.abs(dy)?dx>0?'rechts':'links':dy>0?'vorne':'hinten';const key=this.currentDir+'_attack';if(this.anims.exists(key))this.hero.play(key,true);this.nextAttack=time+800;e.hp-=40;const flash=this.add.circle(e.x,e.y,30,0xffd16b,.65).setDepth(12);this.time.delayedCall(140,()=>flash.destroy());if(e.hp<=0){this.removeEnemy(e);this.kills++;this.refreshHud()}}
-if(time>=this.nextAttack&&this.hero.anims.currentAnim?.key!==this.currentDir+'_idle'){const key=this.currentDir+'_idle';if(this.anims.exists(key))this.hero.play(key,true)}
+const hero=this.hero,home=this.home;
+const candidates=this.enemies.filter(e=>Math.hypot(e.x-home.x,e.y-home.y)<330);
+const target=candidates.sort((a,b)=>Math.hypot(a.x-hero.x,a.y-hero.y)-Math.hypot(b.x-hero.x,b.y-hero.y))[0];
+let moving=false;
+if(target){
+const dx=target.x-hero.x,dy=target.y-(hero.y-55),dist=Math.hypot(dx,dy);
+this.currentDir=Math.abs(dx)>Math.abs(dy)?dx>0?'rechts':'links':dy>0?'vorne':'hinten';
+if(dist>95){const step=Math.min(dist-95,195*dt);hero.x+=dx/dist*step;hero.y+=dy/dist*step;moving=true}
+else if(time>=this.nextAttack){const key=this.currentDir+'_attack';if(this.anims.exists(key))hero.play(key,true);this.heroMode='attack';this.nextAttack=time+800;target.hp-=40;const flash=this.add.circle(target.x,target.y,30,0xffd16b,.65).setDepth(12);this.time.delayedCall(140,()=>flash.destroy());if(target.hp<=0){this.removeEnemy(target);this.kills++;this.refreshHud()}}
+}else{
+const dx=home.x-hero.x,dy=home.y-hero.y,dist=Math.hypot(dx,dy);
+if(dist>3){this.currentDir=Math.abs(dx)>Math.abs(dy)?dx>0?'rechts':'links':dy>0?'vorne':'hinten';const step=Math.min(dist,195*dt);hero.x+=dx/dist*step;hero.y+=dy/dist*step;moving=true}
+}
+if(moving){const key=this.currentDir+'_run';if(this.anims.exists(key)&&hero.anims.currentAnim?.key!==key)hero.play(key,true);this.heroMode='run'}
+else if(time>=this.nextAttack&&this.heroMode!=='idle'){const key=this.currentDir+'_idle';if(this.anims.exists(key))hero.play(key,true);this.heroMode='idle'}
 if(this.wave&&this.spawns===0&&this.enemies.length===0&&this.lastCompleted!==this.wave){this.lastCompleted=this.wave;document.querySelector('#status').textContent='Welle '+this.wave+' geschafft!'}}
 resetCamera(){const c=this.cameras.main;c.setZoom(Math.min(this.scale.width/1250,this.scale.height/900));c.centerOn(850,1040)}
 }
