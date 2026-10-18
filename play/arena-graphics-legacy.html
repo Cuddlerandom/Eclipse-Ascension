@@ -1,0 +1,96 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ECLIPSE – Arena Sandbox</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#28563b;color:white;font:13px system-ui}canvas{width:100%;height:100%;display:block;touch-action:none}header{position:fixed;left:12px;top:calc(8px + env(safe-area-inset-top));pointer-events:none;text-shadow:0 2px 3px #143e29}header b{font:20px Georgia,serif;display:block}.tools{position:fixed;right:calc(10px + env(safe-area-inset-right));top:calc(9px + env(safe-area-inset-top));display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:70vw}button{font:12px system-ui;border:1px solid #9dbda5;background:#163b2e;color:white;border-radius:9px;padding:8px 10px;min-height:36px}.hint{position:fixed;bottom:calc(6px + env(safe-area-inset-bottom));width:100%;text-align:center;text-shadow:0 2px 3px #123524;pointer-events:none;font-size:11px}#msg{position:fixed;bottom:calc(32px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#123a2ee8;padding:6px 12px;border-radius:9px;display:none;white-space:nowrap}</style></head><body><canvas id="arena"></canvas><header><b>ECLIPSE</b>ARENA SANDBOX · FREIGEGEBENER GRUNDRISS</header><div class="tools"><button id="edit">Wegpunkte: AN</button><button id="add">+ Wegpunkt</button><button id="remove">− Punkt</button><button id="save">Speichern</button><button id="export">Export</button><button id="reset">Reset</button></div><div id="msg"></div><div class="hint">🟢 Höhle · 🔵 Weltenbaum · 🟡 Wegpunkte ziehen · Export für Übergabe</div><script>
+const W=960,H=440,canvas=document.querySelector('canvas'),c=canvas.getContext('2d');
+const initial=[[40,377],[275,373],[515,373],[738,373],[848,370],[891,350],[905,324],[897,301],[861,316],[721,318],[504,313],[275,334],[160,319],[98,327],[65,281],[62,253],[71,236],[130,231],[341,252],[458,254],[549,246],[737,231],[837,243],[889,213],[883,177],[873,152],[837,149],[716,167],[529,181],[332,170],[202,168],[133,190],[115,139],[152,102],[206,121],[367,129],[543,51],[681,51],[921,62]];
+let route=initial.map(a=>a.slice()),show=true,selected=-1,drag=-1,dragType='',changed=false;
+try{let saved=JSON.parse(localStorage.getItem('eclipse-arena-sandbox-approved-v2'));if(saved?.route?.length>=2&&saved.route.length<200&&saved.route.every(p=>Array.isArray(p)&&p.length===2&&p.every(n=>Number.isFinite(n))))route=saved.route}catch{}
+const cave=new Image();
+const caveStatus=document.createElement('div');caveStatus.style.cssText='display:none';caveStatus.textContent='Goblinhöhle: lädt…';document.body.append(caveStatus);
+cave.onload=()=>{caveStatus.textContent='Goblinhöhle: Original geladen ('+cave.naturalWidth+'×'+cave.naturalHeight+')'};
+cave.onerror=()=>{caveStatus.textContent='Goblinhöhle: PNG fehlt in GitHub unter assets/Goblinhoehle_V1.0.png'};
+cave.src='../assets/Goblinhoehle_V1.0.png';
+const worldTree=new Image();
+worldTree.onload=()=>{treeStatus.textContent='Weltenbaum: Original geladen ('+worldTree.naturalWidth+'×'+worldTree.naturalHeight+')';treeStatus.style.background='#17623c'};
+worldTree.onerror=()=>{treeStatus.textContent='Weltenbaum: PNG-Ladefehler – GitHub Pages / Dateipfad prüfen';treeStatus.style.background='#852a25'};
+const treeStatus=document.createElement('div');treeStatus.style.cssText='display:none';treeStatus.textContent='Weltenbaum: lädt…';document.body.append(treeStatus);
+worldTree.src='../assets/Weltenbaum_V1.2_Transparent.png?v=5dc6573';
+const $=id=>document.getElementById(id),clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+function notify(s){$('msg').textContent=s;$('msg').style.display='block';clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('msg').style.display='none',2300)}
+function pos(e){let b=canvas.getBoundingClientRect();return [(e.clientX-b.left)/b.width*W,(e.clientY-b.top)/b.height*H]}
+function dist(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1])}
+function drawPath(width,color){
+// Rounded polyline: each bend has a radius limited by its neighbouring segments.
+// Unlike midpoint quadratics, this keeps long straights straight and avoids
+// pulling the road into neighbouring lanes at tight bends.
+c.beginPath();c.moveTo(...route[0]);
+for(let i=1;i<route.length-1;i++){
+ const a=route[i-1],b=route[i],d=route[i+1];
+ const la=Math.hypot(b[0]-a[0],b[1]-a[1]),lb=Math.hypot(d[0]-b[0],d[1]-b[1]);
+ if(la<.01||lb<.01){c.lineTo(...b);continue}
+ const radius=Math.min(23,la*.38,lb*.38);
+ const enter=[b[0]-(b[0]-a[0])/la*radius,b[1]-(b[1]-a[1])/la*radius];
+ const leave=[b[0]+(d[0]-b[0])/lb*radius,b[1]+(d[1]-b[1])/lb*radius];
+ c.lineTo(...enter);c.quadraticCurveTo(b[0],b[1],...leave);
+}
+c.lineTo(...route.at(-1));c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.stroke()}
+function circle(p,r,color,outline='#ecf8e7'){c.beginPath();c.arc(p[0],p[1],r,0,Math.PI*2);c.fillStyle=color;c.fill();c.lineWidth=2.5;c.strokeStyle=outline;c.stroke()}
+
+const goblin={sheet:null,state:'Lade Goblin…',started:performance.now(),speed:72};
+const goblinStatus=document.createElement('div');goblinStatus.style.cssText='position:fixed;bottom:116px;left:10px;padding:6px 9px;background:#102e26;color:white;border-radius:8px;font:12px system-ui;z-index:10';goblinStatus.textContent=goblin.state;document.body.append(goblinStatus);
+async function unzipRunningSheet(buffer){
+ const bytes=new Uint8Array(buffer),view=new DataView(buffer),decoder=new TextDecoder();
+ let eocd=-1;for(let i=bytes.length-22;i>=Math.max(0,bytes.length-65557);i--){if(view.getUint32(i,true)===0x06054b50){eocd=i;break}}
+ if(eocd<0)throw Error('ZIP-Verzeichnis nicht gefunden');
+ let offset=view.getUint32(eocd+16,true),count=view.getUint16(eocd+10,true);
+ for(let j=0;j<count;j++){
+  if(view.getUint32(offset,true)!==0x02014b50)throw Error('ZIP-Eintrag beschädigt');
+  const method=view.getUint16(offset+10,true),packed=view.getUint32(offset+20,true),nameLen=view.getUint16(offset+28,true),extra=view.getUint16(offset+30,true),comment=view.getUint16(offset+32,true),local=view.getUint32(offset+42,true);
+  const name=decoder.decode(bytes.subarray(offset+46,offset+46+nameLen));
+  if(name==='sheet_laufen.png'){
+   if(view.getUint32(local,true)!==0x04034b50)throw Error('ZIP-Daten beschädigt');
+   const begin=local+30+view.getUint16(local+26,true)+view.getUint16(local+28,true),data=bytes.slice(begin,begin+packed);
+   if(method===0)return new Blob([data],{type:'image/png'});
+   if(method===8&&typeof DecompressionStream!=='undefined'){
+    const stream=new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+    return new Blob([await new Response(stream).arrayBuffer()],{type:'image/png'});
+   }
+   throw Error('ZIP-Kompression im Browser nicht unterstützt');
+  }
+  offset+=46+nameLen+extra+comment;
+ }
+ throw Error('Lauf-Sprite-Sheet fehlt');
+}
+async function loadGoblin(){try{
+ const response=await fetch('../assets/Goblin_Pluenderer_V1.0_Produktionskandidat.zip');
+ if(!response.ok)throw Error('ZIP HTTP '+response.status);
+ const blob=await unzipRunningSheet(await response.arrayBuffer());
+ const url=URL.createObjectURL(blob),img=new Image();
+ await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url});
+ goblin.sheet=img;goblin.state='Goblin-Plünderer: läuft';goblinStatus.textContent=goblin.state;goblinStatus.style.background='#17623c';URL.revokeObjectURL(url)
+ }catch(error){goblin.state='Goblin: '+error.message;goblinStatus.textContent=goblin.state;goblinStatus.style.background='#852a25'}}loadGoblin();
+function drawGoblin(now){if(!goblin.sheet||route.length<2)return;let lengths=[],total=0;for(let i=1;i<route.length;i++){const len=dist(route[i-1],route[i]);lengths.push(len);total+=len}if(total<1)return;let travelled=((now-goblin.started)/1000*goblin.speed)%total,index=0;while(index<lengths.length-1&&travelled>lengths[index]){travelled-=lengths[index];index++}const a=route[index],b=route[index+1],t=lengths[index]>0?travelled/lengths[index]:0,x=a[0]+(b[0]-a[0])*t,y=a[1]+(b[1]-a[1])*t,dx=b[0]-a[0],dy=b[1]-a[1];const direction=Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1),frame=Math.floor(now/155)%4;c.imageSmoothingEnabled=false;c.drawImage(goblin.sheet,frame*128,direction*128,128,128,x-24,y-39,48,48)}
+
+
+const roadTiles={ready:false,images:{},error:''};
+const roadRows=5,roadCols=12,roadStep=80;
+function buildRoadRoute(){let p=[];for(let row=0;row<roadRows;row++){let y=360-row*roadStep;if(row%2===0){for(let col=0;col<roadCols;col++)p.push([40+col*roadStep,y])}else{for(let col=roadCols-1;col>=0;col--)p.push([40+col*roadStep,y])}}return p}
+function tileName(prev,next){let ports=[prev,next].filter(Boolean).sort().join('');return ({'E':'endstueck_ost','W':'endstueck_west','N':'endstueck_nord','S':'endstueck_sued','EW':'gerade_west_ost','NS':'gerade_nord_sued','EN':'kurve_nord_ost','NW':'kurve_nord_west','ES':'kurve_sued_ost','SW':'kurve_sued_west'})[ports]}
+function portFrom(a,b){if(!b)return null;let dx=b[0]-a[0],dy=b[1]-a[1];return Math.abs(dx)>Math.abs(dy)?(dx>0?'E':'W'):(dy>0?'S':'N')}
+const roadStatus=document.createElement('div');roadStatus.style.cssText='position:fixed;bottom:52px;right:10px;padding:6px 9px;background:#102e26;color:white;border-radius:8px;font:12px system-ui;z-index:10';roadStatus.textContent='Smaragdwald V1.1: lädt…';document.body.append(roadStatus);
+async function loadRoad(){try{let response=await fetch('../assets/Smaragdwald_Wegsystem_V1.1.zip');if(!response.ok)throw Error('ZIP HTTP '+response.status);let buffer=await response.arrayBuffer();let bytes=new Uint8Array(buffer),v=new DataView(buffer),decoder=new TextDecoder(),end=-1;for(let i=bytes.length-22;i>=Math.max(0,bytes.length-65557);i--){if(v.getUint32(i,true)===0x06054b50){end=i;break}}if(end<0)throw Error('ZIP-Verzeichnis fehlt');let offset=v.getUint32(end+16,true),count=v.getUint16(end+10,true),names=['gerade_west_ost','gerade_nord_sued','kurve_nord_ost','kurve_nord_west','kurve_sued_ost','kurve_sued_west','endstueck_ost','endstueck_west','endstueck_nord','endstueck_sued'];let entries={};
+for(let i=0;i<count;i++){if(v.getUint32(offset,true)!==0x02014b50)throw Error('ZIP-Verzeichnis beschädigt');let nameLen=v.getUint16(offset+28,true),extra=v.getUint16(offset+30,true),comment=v.getUint16(offset+32,true),name=decoder.decode(bytes.subarray(offset+46,offset+46+nameLen));if(names.some(n=>name===n+'.png'))entries[name]=[v.getUint32(offset+42,true),v.getUint16(offset+10,true),v.getUint32(offset+20,true)];offset+=46+nameLen+extra+comment}
+for(const name of names){const entry=entries[name+'.png'];if(!entry)throw Error('Kachel fehlt: '+name);let [local,method,size]=entry,begin=local+30+v.getUint16(local+26,true)+v.getUint16(local+28,true),raw=bytes.slice(begin,begin+size),blob;if(method===0)blob=new Blob([raw],{type:'image/png'});else if(method===8&&typeof DecompressionStream!=='undefined')blob=new Blob([await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer()],{type:'image/png'});else throw Error('ZIP-Kompression nicht unterstützt');let url=URL.createObjectURL(blob),img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url});URL.revokeObjectURL(url);roadTiles.images[name]=img}
+route=buildRoadRoute();roadTiles.ready=true;roadStatus.textContent='Smaragdwald V1.1: 60 Kacheln aktiv';roadStatus.style.background='#17623c';show=false;$('edit').textContent='Wegpunkte: AUS';$('edit').disabled=true;$('add').disabled=true;$('remove').disabled=true;$('save').disabled=true;$('reset').disabled=true;document.querySelector('.hint').textContent='Smaragdwald V1.1 · Goblin-Plünderer auf dem neuen Weg · Testversion';
+}catch(error){roadTiles.error=error.message;roadStatus.textContent='Weg V1.1: '+error.message;roadStatus.style.background='#852a25'}}loadRoad();
+function drawRoadTiles(){for(let i=0;i<route.length;i++){let p=route[i],name=tileName(portFrom(p,route[i-1]),portFrom(p,route[i+1])),img=roadTiles.images[name];if(img)c.drawImage(img,p[0]-roadStep/2,p[1]-roadStep/2,roadStep,roadStep)}}
+
+function render(){let d=Math.min(devicePixelRatio||1,2),w=Math.round(innerWidth*d),h=Math.round(innerHeight*d);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}c.setTransform(w/W,0,0,h/H,0,0);c.fillStyle='#356846';c.fillRect(0,0,W,H);if(roadTiles.ready){c.imageSmoothingEnabled=false;drawRoadTiles()}else{drawPath(39,'#594933');drawPath(30,'#bea071')}if(show){for(let i=1;i<route.length-1;i++){circle(route[i],selected===i?7:5,selected===i?'#ffe77c':'#e9c65a','#665022')}}if(cave.complete&&cave.naturalWidth){c.imageSmoothingEnabled=false;c.drawImage(cave,route[0][0]-47,route[0][1]-53,120,102)}else{circle(route[0],22,'#40d366')}if(worldTree.complete&&worldTree.naturalWidth){c.imageSmoothingEnabled=false;c.drawImage(worldTree,route.at(-1)[0]-91,route.at(-1)[1]-31,115,112)}else{circle(route.at(-1),22,'#318ef0')}drawGoblin(performance.now());requestAnimationFrame(render)}requestAnimationFrame(render);
+canvas.addEventListener('pointerdown',e=>{let p=pos(e),best=1e9;drag=-1;for(let i=0;i<route.length;i++){if(!show&&i!==0&&i!==route.length-1)continue;let dd=dist(p,route[i]);if(dd<best){best=dd;drag=i}}if(best>30){drag=-1;selected=-1;return}selected=drag;canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(drag<0)return;let p=pos(e);route[drag]=[Math.round(clamp(p[0],24,W-24)),Math.round(clamp(p[1],24,H-24))];changed=true});
+function end(){drag=-1}canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
+$('edit').onclick=()=>{show=!show;$('edit').textContent='Wegpunkte: '+(show?'AN':'AUS')};
+$('add').onclick=()=>{let i=selected>=0&&selected<route.length-1?selected:Math.floor((route.length-1)/2);let a=route[i],b=route[i+1];route.splice(i+1,0,[Math.round((a[0]+b[0])/2),Math.round((a[1]+b[1])/2)]);selected=i+1;show=true;$('edit').textContent='Wegpunkte: AN';changed=true;notify('Neuer Wegpunkt eingefügt')};
+$('remove').onclick=()=>{if(selected<=0||selected>=route.length-1){notify('Zuerst gelben Wegpunkt auswählen');return}route.splice(selected,1);selected=-1;changed=true;notify('Wegpunkt entfernt')};
+$('save').onclick=()=>{try{localStorage.setItem('eclipse-arena-sandbox-v1',JSON.stringify({route}));notify('Auf diesem Gerät gespeichert')}catch{notify('Speichern nicht möglich')}};
+$('reset').onclick=()=>{if(!confirm('Alle Änderungen zurücksetzen?'))return;route=initial.map(p=>p.slice());selected=-1;localStorage.removeItem('eclipse-arena-sandbox-v1');notify('Grundriss zurückgesetzt')};
+$('export').onclick=async()=>{let payload=JSON.stringify({project:'ECLIPSE Smaragdwald',version:1,canvas:[W,H],cave:route[0],worldTree:route.at(-1),route});try{await navigator.clipboard.writeText(payload);notify('Koordinaten kopiert – hier einfügen!')}catch{let blob=new Blob([payload],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='eclipse-arena-layout.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('JSON-Datei exportiert')}};
+</script></body></html>
