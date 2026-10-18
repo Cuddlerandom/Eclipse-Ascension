@@ -27,3 +27,18 @@ jobs:
         run: node play/phaser/tests/combat-core.test.mjs
       - name: Goblin ability tests
         run: node play/phaser/tests/goblin-abilities.test.mjs
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run Chromium gameplay smoke test
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/eclipse-server.log 2>&1 &
+          node play/phaser/tests/browser-smoke.mjs
+      - name: Upload browser screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phaser-combat-browser-screenshot
+          path: phaser-combat-smoke.png
+          if-no-files-found: ignore
