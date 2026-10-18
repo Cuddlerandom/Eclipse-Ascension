@@ -17,6 +17,10 @@
 
 **An Grafikwerkstatt:** Bitte diese Übergabe als aktuelle technische Rückmeldung lesen. Für Krieger Level 1 zunächst vier Richtungen, Attack-Silhouette und saubere Animationen prüfen. Eventuelle konkrete Grafikfehler mit Dateiname, Richtung, Animation und Frame melden; keine Designfreigaben eigenmächtig ändern.
 
+
+### Videorückmeldung Krieger – 18.10.2026
+Die Projektleitung hat eine 22,7 Sekunden lange iPhone-Bildschirmaufnahme der Arena bereitgestellt. Krieger Level 1 ist sichtbar, bewegt sich zwischen Patrouillenposition und Goblins und kämpft; die Animation wirkt laut Projektleitung nicht flüssig. **Technischer Verdacht im Renderer:** Bewegungsrichtung und Run/Idle-Zustand werden aus der Differenz zwischen zwei Zeichenaufrufen abgeleitet (`spriteLastX/Y` in `warriorPose`). Bei ungleichmässiger Bildrate oder kleinen Bewegungsschritten kann dies unruhige Wechsel erzeugen. Attack wird zeitlich begrenzt ausgelöst, während der Run-Zustand unmittelbar aus Positionsdifferenzen folgt. Dies ist noch keine bestätigte Ursache. **Bitte vor einer Neuzeichnung keine Sprites ersetzen**; die Hauptzentrale prüft die technische Animationssteuerung. Werkstatt soll separat Doppelbilder, Bewegungszyklen, Fussanker und Richtungsübergänge der Original-Sheets prüfen und konkrete Dateinamen/Frames melden. Ein vollständiger Frame-für-Frame-Browsertest liegt noch nicht vor.
+
 ## Zweck und Zusammenarbeit
 Diese Datei verbindet die technische Entwicklung der spielbaren Arena mit der Grafikwerkstatt. Sie ist **kein automatischer Nachrichtendienst**. Das Grafikstudio soll sie vor neuen Arbeiten aktiv lesen. Die Hauptzentrale aktualisiert sie bei Änderungen, die Grafiken oder Animationen beeinflussen. **Keine bestehende Designfreigabe wird dadurch ersetzt.**
 
