@@ -12,5 +12,12 @@ export function upgradeCost(level) {
 }
 export function waveCompletionBonus(wave) {
   if (!Number.isInteger(wave) || wave < 1 || wave > 100) throw new RangeError('Invalid wave');
-  return 35 + 5 * Math.floor((wave - 1) / 5);
+  return 35 + 2 * Math.floor((wave - 1) / 10);
+}
+
+// High-wave kills no longer flood the economy; early waves keep full rewards.
+export function enemyGoldReward(baseGold, wave, isBoss=false) {
+ if (!Number.isInteger(wave) || wave<1 || wave>100 || !Number.isFinite(baseGold) || baseGold<0) throw new RangeError('Invalid reward');
+ if (isBoss) return 60 + 20 * (wave / 25 - 1);
+ return wave <= 20 ? baseGold : Math.max(1, Math.ceil(baseGold * (wave <= 50 ? 0.75 : 0.5)));
 }
