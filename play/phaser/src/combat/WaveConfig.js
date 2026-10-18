@@ -5,7 +5,7 @@ export const UNLOCK_WAVES = Object.freeze({
 });
 export function waveEnemyCount(wave) {
   if (!Number.isInteger(wave) || wave < 1 || wave > 100) throw new RangeError('Wave must be 1–100');
-  return Math.min(90, 8 + Math.floor(wave * 0.65) + Math.floor(Math.sqrt(wave) * 1.5));
+  return 8 + 2 * wave;
 }
 export function waveRoster(wave) {
   const count = waveEnemyCount(wave);
