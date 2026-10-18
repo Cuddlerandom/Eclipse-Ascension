@@ -25,6 +25,7 @@ jobs:
           node --check play/phaser/src/combat/GoblinAbilities.js
           node --check play/phaser/src/combat/WaveConfig.js
           node --check play/phaser/src/combat/Economy.js
+          node --check play/phaser/src/combat/EnemyBalance.js
       - name: Combat target, damage and cooldown tests
         run: node play/phaser/tests/combat-core.test.mjs
       - name: Goblin ability tests
@@ -33,6 +34,8 @@ jobs:
         run: node play/phaser/tests/wave-config.test.mjs
       - name: Economy tests
         run: node play/phaser/tests/economy.test.mjs
+      - name: Enemy health thresholds
+        run: node play/phaser/tests/enemy-balance.test.mjs
       - name: Install browser test dependencies
         run: |
           npm install --no-save playwright@1.56.1
