@@ -49,22 +49,33 @@ for(const tower of this.towers.filter(t=>t.kind===0)){
  const stunned=time<tower.stunnedUntil;
  const step=warriorStep(hero,home,target,dt,stunned);
  const tx=target?target.x:home.x,ty=target?target.y+55:home.y;
- if(Math.hypot(tx-hero.x,ty-hero.y)>1)tower.dir=warriorDirection(tx-hero.x,ty-hero.y);
+ const direction=Math.hypot(tx-hero.x,ty-hero.y)>1?warriorDirection(tx-hero.x,ty-hero.y):tower.dir;
  hero.x=step.x;hero.y=step.y;
+ if(stunned){
+  if(tower.mode!=='stunned'){const key=tower.dir+'_idle';if(this.anims.exists(key))hero.play(key,true);hero.setTint(0xa9c9ff);tower.mode='stunned'}
+  continue;
+ }
+ if(tower.mode==='stunned'){hero.clearTint();tower.mode='idle'}
  if(step.moving){
+  tower.dir=direction;
   const key=tower.dir+'_run';
   if(this.anims.exists(key)&&hero.anims.currentAnim?.key!==key)hero.play(key,true);
   tower.mode='run';
- }else if(step.attacking&&!stunned&&time>=tower.nextAttack){
+ }else if(step.attacking&&time>=tower.nextAttack){
+  tower.dir=direction;
   const key=tower.dir+'_attack';
   if(this.anims.exists(key))hero.play(key,true);
   tower.mode='attack';tower.nextAttack=time+800;
-  target.hp-=calculateDamage(classes[0].damage,tower.level,target.type)*bossDamageMultiplier(target,time);
-  const flash=this.add.circle(target.x,target.y,30,0xffd16b,.65).setDepth(12);
-  this.time.delayedCall(140,()=>flash.destroy());
- }else if(!stunned&&(!step.attacking||time>=tower.nextAttack)&&tower.mode!=='idle'){
+  const damage=calculateDamage(classes[0].damage,tower.level,target.type)*bossDamageMultiplier(target,time);
+  target.hp-=damage;
+  this.playWarriorHit(target,damage);
+ }else if(!step.attacking&&tower.mode!=='idle'){
+  tower.dir=direction;
   const key=tower.dir+'_idle';
   if(this.anims.exists(key))hero.play(key,true);
+  tower.mode='idle';
+ }else if(step.attacking&&tower.mode==='attack'&&hero.anims?.isPlaying===false){
+  const key=tower.dir+'_idle';if(this.anims.exists(key))hero.play(key,true);
   tower.mode='idle';
  }
 }
@@ -124,6 +135,18 @@ for(const tower of this.towers){
   this.addSkillPulse(center.x,center.y,150,0xce90ff);tower.ultimateAt=time+16000;
  }
 }
+}
+playWarriorHit(enemy,damage){
+ if(!enemy?.body?.active)return;
+ const x=enemy.x,y=enemy.y;
+ const impact=this.add.circle(x,y,10,0xffe5a2,.85).setStrokeStyle(3,0xffb343).setDepth(13);
+ this.tweens.add({targets:impact,radius:34,alpha:0,duration:230,ease:'Cubic.Out',onComplete:()=>impact.destroy()});
+ const number=this.add.text(x,y-42,String(Math.round(damage)),{font:'bold 19px system-ui',color:'#ffe7a4',stroke:'#402518',strokeThickness:4}).setOrigin(.5).setDepth(15);
+ this.tweens.add({targets:number,y:y-82,alpha:0,duration:650,ease:'Sine.Out',onComplete:()=>number.destroy()});
+ if(enemy.body.active){
+  enemy.body.setStrokeStyle(5,0xffdc79);
+  this.time.delayedCall(125,()=>{if(enemy.body?.active)enemy.body.setStrokeStyle(4,0x36552c)});
+ }
 }
 playTitanUltimate(x,y,radius,count){
  const duration=650;
