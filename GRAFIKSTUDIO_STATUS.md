@@ -5,6 +5,27 @@
 **Wichtig:** Vor neuen Entwürfen diese Datei und die freigegebenen Designvorgaben prüfen. Bei Widersprüchen Rückfrage an die Hauptzentrale/Projektleitung.
 
 
+## AKTUELLER ARBEITSSTAND & NÄCHSTE SCHRITTE – 18.10.2026 (verbindliche Kurzfassung)
+
+**Priorität P0: Krieger Level 1 V1.0 – fehlende/versetzte Teile in Idle und Attack.** Die Projektleitung beobachtet im stark gezoomten iPhone-Spielbild, dass im Idle Teile der Figur unvollständig wirken und während des Angriffs Körper-/Schildteile scheinbar verschwinden bzw. jenseits einer unsichtbaren rechteckigen Grenze wieder erscheinen. Eine zusätzliche Zoomaufnahme wurde besprochen. **Der Effekt ist ernst zu nehmen; die genaue Ursache ist noch nicht bewiesen.** Das ist nicht automatisch ein FPS-Problem, und zusätzliche Zwischenbilder allein beheben ihn nicht.
+
+**Bereits technisch erledigt und nachgewiesen:**
+- Alle **16 Original-PNGs** liegen in `assets/heroes/krieger/level1-v1/`; Originale bislang **nicht verändert**.
+- **Alle 16 PNG-IHDR-Abmessungen aus GitHub geprüft:** pro Richtung `idle` = **960×160** (6 Frames), `run` = **1280×160** (8), `attack` = **1280×160** (8), `hit` = **640×160** (4). Die Sheets haben somit die vom Renderer erwartete Gesamtgeometrie. **Nicht geprüft/bewiesen:** ob die *Pixel innerhalb* der 160×160-Kacheln vollständig, korrekt ausgerichtet und frei von überlaufenden Körperteilen sind.
+- Animationssteuerung im Spiel auf `main` verbessert: Run/Idle aus Bewegungsdaten statt Zeichenframe-Differenzen, kurze Bewegungs-Toleranz, Attack-Start und Zielausrichtung (Commit `18fdd0b`). **Noch kein bestätigter iPhone-Browser-Abnahmetest.**
+- **NEU: Sprite Inspector V1.0**, `play/sprite-inspector.html`, Commit `f0aa2f2`. Öffentlicher Link: **https://cuddlerandom.github.io/Eclipse-Ascension/play/sprite-inspector.html**. Vier Richtungen, vier Animationen, Frame-Slider, Einzelschritt, 25/50/100/200%-Playback, 160×160-Kachelgrenzen, Fussanker-Hilfslinie und automatische Alpha-/Randkontaktberichte. Tool auf `main` committed; **Browser-/iPhone-Funktionstest steht aus**. Randkontakt ist ein **Hinweis**, kein automatischer Beweis für einen Defekt.
+
+**Arbeitsauftrag Grafikwerkstatt – JETZT:**
+1. Inspector öffnen und **zuerst Idle + Attack in allen vier Richtungen**, danach Run + Hit, **jeden Frame einzeln** kontrollieren. Die von der Projektleitung beschriebenen Schild-/Körperteile ausserhalb der Kachelgrenze gezielt suchen. Nicht aus PNG-Gesamtbreite auf korrekte Einzelbilder schliessen.
+2. Für jeden auffälligen Frame **exakten Dateinamen, Richtung, Animation, 0-basierten Frame-Index, sichtbaren Fehler und mögliche Korrektur** dokumentieren; möglichst Screenshot mit Kachelrahmen beilegen. Transparente Löcher, abgeschnittene Gliedmassen, Teile am gegenüberliegenden Rand, lose Pixelinseln und wechselnde Fussanker (Soll **80,144**) prüfen.
+3. **Erst nach Ursachenklärung** defekte Original-Frames in einer **neuen, sauber versionierten V1.1** korrigieren; V1.0 unangetastet lassen. Bei Platzmangel innerhalb 160×160 **nicht blind skalieren**: mit Hauptzentrale einheitlich grössere Frame-Kacheln/Anker/Renderer-Parameter abstimmen. Neue Frames dürfen nicht in Nachbarkacheln überlaufen.
+4. **Danach**, nicht davor, flüssigere Animationen durch echte Zwischenbilder prüfen: Run etwa 12–16, Attack etwa 12, Idle optional 8, Hit optional 6–8 Frames je Richtung. Das sind **Zielvorschläge, keine Designfreigabe**. Kein blosses Duplizieren. Übergabe mit Manifest: Abmessungen, Anzahl, FPS, Fussanker, Richtung, Version.
+5. Ergebnisse in GitHub dokumentieren und Hauptzentrale zur **Integration und iPhone-Abnahme** übergeben. Bestehendes Gameplay und freigegebenes Charakterdesign beibehalten.
+
+**Zuständigkeiten:** Hauptzentrale 🛠️ verantwortet Inspector, Renderer, Integration, technische Prüfung und Commits; Grafikwerkstatt 🎨 verantwortet Sprite-Inhaltsprüfung, Reparatur und neue Zwischenbilder; Projektleitung 👑 nimmt die Darstellung auf dem iPhone ab. **Keine Behauptung einer bereits erfolgten visuellen Abnahme.** Arbeiten ausschliesslich in **`Cuddlerandom/Eclipse-Ascension`**; nach Projektleitungsfreigabe direkt auf `main`, nachvollziehbar und reversibel.
+
+---
+
 ## AKTUELLE ÜBERGABE AN DIE GRAFIKWERKSTATT – 18.10.2026
 
 **Verbindlich ab jetzt:** Die Projektleitung hat die Arbeit direkt auf `main` freigegeben. Separater Testbranch ist für normale Iterationen nicht mehr erforderlich. Jede Änderung in einem nachvollziehbaren Commit; bei Problemen per Revert zurück. Testspielstände müssen derzeit nicht erhalten bleiben. **Nur Repository `Cuddlerandom/Eclipse-Ascension` bearbeiten, nicht `Cuddlerandom/eclipse`.**
