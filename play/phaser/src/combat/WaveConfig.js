@@ -23,5 +23,7 @@ export function waveRoster(wave) {
   const roster = Array.from({length:count}, (_,i) => pool[(i * 7 + Math.floor(i / 3) + wave) % pool.length]);
   // Guarantee the debut is visible, but avoid special enemies in the first five waves.
   if (newlyUnlocked) roster[Math.floor(count / 2)] = newlyUnlocked;
+  // Boss replaces the last regular goblin, preserving the total wave count.
+  if (wave % 25 === 0) roster[count - 1] = 'boss';
   return roster;
 }
