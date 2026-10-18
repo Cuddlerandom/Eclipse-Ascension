@@ -22,3 +22,9 @@ for(const w of [26,50,51,75,76,100])assert.ok(enemyHealthMultiplier(w,'spaeher')
 assert.ok(enemyHealthMultiplier(100,'schildtraeger')>enemyHealthMultiplier(75,'schildtraeger'));
 assert.ok(enemyHealthMultiplier(100,'schamane')>enemyHealthMultiplier(50,'schamane'));
 assert.ok(enemySpeedMultiplier(100,'spaeher')>enemySpeedMultiplier(50,'spaeher'));
+
+assert.equal(enemySpeedMultiplier(1,'pluenderer'),1);
+assert.equal(enemySpeedMultiplier(5,'pluenderer'),1);
+assert.ok(enemySpeedMultiplier(6,'pluenderer')>=1.12);
+assert.ok(enemySpeedMultiplier(50,'schildtraeger')>enemySpeedMultiplier(6,'schildtraeger'));
+assert.ok(enemySpeedMultiplier(100,'spaeher')>enemySpeedMultiplier(100,'pluenderer'));
