@@ -53,10 +53,14 @@ jobs:
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/eclipse-server.log 2>&1 &
           node play/phaser/tests/browser-smoke.mjs
+      - name: Run warrior level 1-5 browser test
+        run: node play/phaser/tests/warrior-browser.test.mjs
       - name: Upload browser screenshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: phaser-combat-browser-screenshot
-          path: phaser-combat-smoke.png
+          path: |
+            phaser-combat-smoke.png
+            phaser-warrior-levels.png
           if-no-files-found: ignore
