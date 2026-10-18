@@ -1,0 +1,29 @@
+name: Phaser combat regression tests
+on:
+  push:
+    branches:
+      - feature/phaser-combat-core-v1
+  pull_request:
+    paths:
+      - 'play/phaser/src/combat/**'
+      - 'play/phaser/src/scenes/WorldScene.js'
+      - 'play/phaser/tests/**'
+      - '.github/workflows/phaser-combat-tests.yml'
+  workflow_dispatch:
+jobs:
+  combat-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: |
+          node --check play/phaser/src/scenes/WorldScene.js
+          node --check play/phaser/src/combat/CombatCore.js
+          node --check play/phaser/src/combat/GoblinAbilities.js
+      - name: Combat target, damage and cooldown tests
+        run: node play/phaser/tests/combat-core.test.mjs
+      - name: Goblin ability tests
+        run: node play/phaser/tests/goblin-abilities.test.mjs
