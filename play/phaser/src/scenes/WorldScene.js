@@ -1,3 +1,4 @@
+import { WARRIOR_SKILLS, warriorSkillTargets, warriorSkillReady } from '../combat/WarriorAbilities.js?v=20';
 import { warriorTarget, warriorStep, warriorDirection } from '../combat/WarriorBehavior.js?v=19';
 import { waveRoster } from '../combat/WaveConfig.js';
 import { bossName, bossMechanic, bossDamageMultiplier, bossSpeedMultiplier } from '../combat/BossMechanics.js';
@@ -37,7 +38,7 @@ heroCost(kind){return heroPurchaseCost(kind,this.towers.filter(t=>t.kind===kind)
 openBuildAt(x,y){const existing=this.towers.find(t=>Math.hypot(t.x-x,t.y-y)<70);if(existing){this.pendingSpot=null;const cost=upgradeCost(existing.level);this.buildPanel.innerHTML='<b>'+classes[existing.kind].name+' · Level '+existing.level+'/5</b><div style="margin-top:10px"></div>';const area=this.buildPanel.lastElementChild;const up=document.createElement('button');up.textContent=existing.level>=5?'Maximallevel erreicht':'⬆ Verbessern · '+cost+' 🪙';up.disabled=existing.level>=5||this.gold<(cost??Infinity);up.onclick=()=>{if(existing.level>=5||this.gold<(cost??Infinity))return;this.gold-=cost;existing.level++;existing.label?.setText('Lv.'+existing.level);this.refreshHud();this.buildPanel.style.display='none'};area.appendChild(up);if(existing.kind!==0){const row=document.createElement('div');row.style.cssText='margin-top:10px;display:flex;gap:8px;flex-wrap:wrap';const group=document.createElement('button');group.textContent='Gruppe: '+groups[existing.priority??0];group.onclick=()=>{existing.priority=((existing.priority??0)+1)%3;group.textContent='Gruppe: '+groups[existing.priority]};const order=document.createElement('button');order.textContent='Ziel: '+priorities[existing.secondary??0];order.onclick=()=>{existing.secondary=((existing.secondary??0)+1)%4;order.textContent='Ziel: '+priorities[existing.secondary]};row.append(group,order);area.appendChild(row)}const close=document.createElement('button');close.textContent='✕';close.style.marginLeft='10px';close.onclick=()=>this.buildPanel.style.display='none';area.appendChild(close);this.buildPanel.style.display='block';return}
 if(!this.canPlace(x,y)){this.buildPanel.style.display='none';return}
 this.pendingSpot={x,y};this.buildPanel.innerHTML='<b>⚔ Held an dieser Stelle bauen</b><div id="buildChoices" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"></div>';const area=this.buildPanel.querySelector('#buildChoices');classes.forEach((cl,kind)=>{const cost=this.heroCost(kind),btn=document.createElement('button');btn.textContent=cl.name+' · '+cost+' 🪙';btn.disabled=this.gold<cost;btn.onclick=()=>this.placeTower(kind);area.appendChild(btn)});const cancel=document.createElement('button');cancel.textContent='✕ Abbrechen';cancel.onclick=()=>{this.pendingSpot=null;this.buildPanel.style.display='none'};area.appendChild(cancel);this.buildPanel.style.display='block'}
-placeTower(kind){const spot=this.pendingSpot;if(!spot||!this.canPlace(spot.x,spot.y))return;const cl=classes[kind],cost=this.heroCost(kind);if(this.gold<cost)return;this.gold-=cost;const {x,y}=spot;let tower={x,y,kind,level:1,cd:0,priority:0,secondary:0,stunnedUntil:0,stunImmuneUntil:0,skillAt:0,ultimateAt:0};if(kind===0){const hero=this.add.sprite(x,y,this.textures.exists('vorne_idle')?'vorne_idle':'__MISSING').setOrigin(.5,.9).setDepth(10).setScale(1.2);if(this.anims.exists('vorne_idle'))hero.play('vorne_idle');tower.hero=hero;tower.dir='vorne';tower.mode='idle';tower.nextAttack=0;tower.home={x,y};tower.rangeCircle=this.add.circle(x,y-55,cl.range,0x89e9b3,.04).setStrokeStyle(2,0x89e9b3,.27).setDepth(1)}else{tower.body=this.add.circle(x,y,29,cl.color).setStrokeStyle(4,0xffffff).setDepth(10);tower.icon=this.add.text(x,y,kind===1?'➶':'✦',{font:'bold 33px system-ui',color:'#182a22'}).setOrigin(.5).setDepth(11)}tower.label=this.add.text(x,y+44,'Lv.1',{font:'bold 15px system-ui',color:'#fff'}).setOrigin(.5).setDepth(11);this.towers.push(tower);this.pendingSpot=null;this.buildPanel.style.display='none';this.refreshHud()}
+placeTower(kind){const spot=this.pendingSpot;if(!spot||!this.canPlace(spot.x,spot.y))return;const cl=classes[kind],cost=this.heroCost(kind);if(this.gold<cost)return;this.gold-=cost;const {x,y}=spot;let tower={x,y,kind,level:1,cd:0,priority:0,secondary:0,stunnedUntil:0,stunImmuneUntil:0,skillAt:0,ultimateAt:0,titanAt:0};if(kind===0){const hero=this.add.sprite(x,y,this.textures.exists('vorne_idle')?'vorne_idle':'__MISSING').setOrigin(.5,.9).setDepth(10).setScale(1.2);if(this.anims.exists('vorne_idle'))hero.play('vorne_idle');tower.hero=hero;tower.dir='vorne';tower.mode='idle';tower.nextAttack=0;tower.home={x,y};tower.rangeCircle=this.add.circle(x,y-55,cl.range,0x89e9b3,.04).setStrokeStyle(2,0x89e9b3,.27).setDepth(1)}else{tower.body=this.add.circle(x,y,29,cl.color).setStrokeStyle(4,0xffffff).setDepth(10);tower.icon=this.add.text(x,y,kind===1?'➶':'✦',{font:'bold 33px system-ui',color:'#182a22'}).setOrigin(.5).setDepth(11)}tower.label=this.add.text(x,y+44,'Lv.1',{font:'bold 15px system-ui',color:'#fff'}).setOrigin(.5).setDepth(11);this.towers.push(tower);this.pendingSpot=null;this.buildPanel.style.display='none';this.refreshHud()}
 
 removeEnemy(e){const index=this.enemies.indexOf(e);if(index<0)return;e.body.destroy();e.label.destroy();e.bar.destroy();this.enemies.splice(index,1)}
 update(time,delta){const dt=Math.min(delta,50)/1000;if(this.gameOver)return;if(this.spawns&&time>=this.nextSpawn){this.spawnGoblin();this.spawned++;this.spawns--;this.nextSpawn=time+(this.wave<=5?1250:900)}
@@ -94,8 +95,8 @@ for(const tower of this.towers){
  if(!nearby.length)continue;
  if(time>=tower.skillAt){
   if(tower.kind===0){
-   const targets=nearby.filter(e=>Math.hypot(e.x-cx,e.y-cy)<105);
-   if(targets.length>=2){for(const e of targets)e.hp-=calculateDamage(24,tower.level,e.type)*bossDamageMultiplier(e,time);this.addSkillPulse(cx,cy,105,0xffc56e);tower.skillAt=time+5500}
+   const skill=WARRIOR_SKILLS.cleave,targets=warriorSkillTargets(nearby,cx,cy,skill);
+   if(warriorSkillReady(tower.level,time,tower.skillAt,targets,skill)){for(const e of targets)e.hp-=calculateDamage(skill.baseDamage,tower.level,e.type)*bossDamageMultiplier(e,time);this.addSkillPulse(cx,cy,skill.radius,0xffc56e);tower.skillAt=time+skill.cooldown}
   }else if(tower.kind===1&&nearby.length>=2){
    for(const e of nearby.slice(0,3))e.hp-=calculateDamage(24,tower.level,e.type)*bossDamageMultiplier(e,time);
    this.addSkillPulse(cx,cy,cl.range,0x77b5e8);tower.skillAt=time+6500;
@@ -104,10 +105,17 @@ for(const tower of this.towers){
    this.addSkillPulse(nearby[0].x,nearby[0].y,115,0x9cdbff);tower.skillAt=time+8500;
   }
  }
+ if(tower.kind===0&&tower.level>=5){
+  const skill=WARRIOR_SKILLS.titan,targets=warriorSkillTargets(this.enemies,cx,cy,skill);
+  if(warriorSkillReady(tower.level,time,tower.titanAt,targets,skill)){
+   for(const e of targets){e.hp-=calculateDamage(skill.baseDamage,tower.level,e.type)*bossDamageMultiplier(e,time);e.blockedUntil=Math.max(e.blockedUntil??0,time+skill.stunMs)}
+   this.addSkillPulse(cx,cy,skill.radius,0xff7848);tower.titanAt=time+skill.cooldown;
+  }
+ }
  if(tower.level<4||time<tower.ultimateAt)continue;
  if(tower.kind===0){
-  const targets=nearby.filter(e=>Math.hypot(e.x-cx,e.y-cy)<125);
-  if(targets.length>=2){for(const e of targets)e.blockedUntil=Math.max(e.blockedUntil??0,time+1700);this.addSkillPulse(cx,cy,125,0xffd16b);tower.ultimateAt=time+14000}
+  const skill=WARRIOR_SKILLS.guard,targets=warriorSkillTargets(nearby,cx,cy,skill);
+  if(warriorSkillReady(tower.level,time,tower.ultimateAt,targets,skill)){for(const e of targets)e.blockedUntil=Math.max(e.blockedUntil??0,time+skill.stunMs);this.addSkillPulse(cx,cy,skill.radius,0xffd16b);tower.ultimateAt=time+skill.cooldown}
  }else if(tower.kind===1&&nearby.length>=3){
   for(const e of nearby)e.hp-=calculateDamage(32,tower.level,e.type)*bossDamageMultiplier(e,time);
   this.addSkillPulse(cx,cy,cl.range,0xe5d27a);tower.ultimateAt=time+15000;
