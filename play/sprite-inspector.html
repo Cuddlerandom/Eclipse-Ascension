@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ECLIPSE · Sprite Inspector V1.0</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101b18;color:#e5f1e8;font:15px system-ui,sans-serif}header{padding:16px;background:#1c3028}h1{font-size:21px;margin:0 0 6px}p{margin:5px 0;color:#b8cec1}main{max-width:1120px;margin:auto;padding:16px}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;background:#1b2d26;padding:14px;border-radius:12px}label{display:grid;gap:5px;font-size:13px}select,input,button{background:#294a39;color:white;border:1px solid #6d9a7a;border-radius:7px;padding:9px;font:inherit}button{cursor:pointer}.viewer{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.panel{background:#1b2d26;border-radius:12px;padding:14px;min-width:0}canvas{width:100%;image-rendering:pixelated;background-color:#bec6bf;background-image:linear-gradient(45deg,#89958c 25%,transparent 25%),linear-gradient(-45deg,#89958c 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#89958c 75%),linear-gradient(-45deg,transparent 75%,#89958c 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}#single{aspect-ratio:1;max-height:530px;object-fit:contain}#sheet{aspect-ratio:4/1}#report{white-space:pre-wrap;line-height:1.6;font:13px ui-monospace,monospace;overflow-wrap:anywhere}.note{color:#f3d58c}a{color:#bce9c6}@media(max-width:700px){.viewer{grid-template-columns:1fr}.controls{align-items:stretch}}
+</style></head><body>
+<header><h1>⚔️ ECLIPSE Sprite Inspector V1.0</h1><p>Original-Sheets prüfen · Frame-Grenzen · Transparenz · Einzelbild & Zeitlupe</p></header>
+<main><div class="controls">
+<label>Richtung<select id="dir"><option value="vorne">Vorne</option><option value="hinten">Hinten</option><option value="links">Links</option><option value="rechts">Rechts</option></select></label>
+<label>Animation<select id="anim"><option value="idle">Idle (6)</option><option value="run">Run (8)</option><option value="attack">Attack (8)</option><option value="hit">Hit (4)</option></select></label>
+<label>Frame<input id="frame" type="range" min="0" max="5" value="0"><span id="frameLabel">0 / 5</span></label>
+<label>Abspieltempo<select id="speed"><option value="0.25">25 %</option><option value="0.5">50 %</option><option value="1" selected>100 %</option><option value="2">200 %</option></select></label>
+<button id="play">▶ Abspielen</button><button id="step">Nächster Frame</button>
+<label><span>Hilfslinien</span><input id="grid" type="checkbox" checked></label>
+</div><div class="viewer"><section class="panel"><h2>Einzelbild</h2><canvas id="single" width="160" height="160"></canvas><p id="status">Lade Originalgrafik …</p></section><section class="panel"><h2>Gesamtes Sprite-Sheet</h2><canvas id="sheet" width="960" height="160"></canvas><p>Goldener Rahmen = aktueller Frame. Rote Linien = 160-Pixel-Grenzen.</p></section></div>
+<section class="panel"><h2>Automatischer Frame-Bericht</h2><p class="note">Randkontakt und isolierte Pixelgruppen sind Verdachtsmomente, kein Beweis für defekte Grafik. Manuelle Sichtprüfung bleibt nötig.</p><div id="report"></div><button id="copy">Bericht kopieren</button></section>
+<p><a href="arena-sandbox-user-layout.html">← Zurück zum Spiel</a></p></main>
+<script>
+'use strict';
+const META={idle:[6,7],run:[8,11],attack:[8,12],hit:[4,8]},SIZE=160,ids=['dir','anim','frame','frameLabel','speed','grid','single','sheet','report','status','play','step','copy'];
+const el=Object.fromEntries(ids.map(id=>[id,document.getElementById(id)]));let image=null,playing=false,stamp=0,acc=0,reportText='';
+const src=()=> '../assets/heroes/krieger/level1-v1/sheet_'+el.dir.value+'_'+el.anim.value+'.png';
+const ctx=(canvas)=>{const c=canvas.getContext('2d',{willReadFrequently:true});c.imageSmoothingEnabled=false;return c};
+function analyze(img){
+ const n=META[el.anim.value][0],c=document.createElement('canvas');c.width=img.width;c.height=img.height;const x=ctx(c);x.drawImage(img,0,0);const data=x.getImageData(0,0,c.width,c.height).data;let lines=[];
+ lines.push('Datei: '+src());lines.push('PNG: '+img.width+' × '+img.height+' px; erwartet: '+(n*SIZE)+' × '+SIZE+' px');
+ if(img.width!==n*SIZE||img.height!==SIZE)lines.push('⚠️ FEHLER: Sprite-Sheet-Geometrie passt nicht!');
+ for(let f=0;f<n;f++){let count=0,minX=SIZE,minY=SIZE,maxX=-1,maxY=-1,left=0,right=0,top=0,bottom=0;
+  for(let y=0;y<SIZE;y++)for(let xx=0;xx<SIZE;xx++){const a=data[((y*img.width)+(f*SIZE+xx))*4+3];if(a<16)continue;count++;minX=Math.min(minX,xx);maxX=Math.max(maxX,xx);minY=Math.min(minY,y);maxY=Math.max(maxY,y);if(xx===0)left++;if(xx===SIZE-1)right++;if(y===0)top++;if(y===SIZE-1)bottom++}
+  const touches=[left?'links('+left+')':'',right?'rechts('+right+')':'',top?'oben('+top+')':'',bottom?'unten('+bottom+')':''].filter(Boolean);
+  lines.push('Frame '+f+': '+count+' sichtbare Pixel; '+(count?'Box '+minX+','+minY+' bis '+maxX+','+maxY:'LEER')+(touches.length?' | ⚠️ Randkontakt: '+touches.join(', '):' | kein Randkontakt'));
+ }
+ return lines.join('\n');
+}
+function render(){const n=META[el.anim.value][0],f=+el.frame.value;el.frameLabel.textContent=f+' / '+(n-1);const a=ctx(el.single),b=ctx(el.sheet);a.clearRect(0,0,SIZE,SIZE);b.clearRect(0,0,el.sheet.width,el.sheet.height);if(!image)return;a.drawImage(image,f*SIZE,0,SIZE,SIZE,0,0,SIZE,SIZE);b.drawImage(image,0,0);if(el.grid.checked){a.strokeStyle='#ff5050';a.lineWidth=.7;a.strokeRect(.5,.5,SIZE-1,SIZE-1);a.strokeStyle='#ffe274';a.setLineDash([3,3]);a.beginPath();a.moveTo(80,0);a.lineTo(80,160);a.moveTo(0,144);a.lineTo(160,144);a.stroke();a.setLineDash([]);b.strokeStyle='#f44';b.lineWidth=1;for(let i=0;i<=n;i++){b.beginPath();b.moveTo(i*SIZE+.5,0);b.lineTo(i*SIZE+.5,SIZE);b.stroke()}b.strokeStyle='#ffe274';b.lineWidth=3;b.strokeRect(f*SIZE+1.5,1.5,SIZE-3,SIZE-3)}}
+function load(){playing=false;el.play.textContent='▶ Abspielen';const n=META[el.anim.value][0];el.frame.max=n-1;el.frame.value=0;image=null;render();const im=new Image();const url=src();el.status.textContent='Lade '+url;im.onload=()=>{if(url!==src())return;image=im;el.sheet.width=im.width;el.sheet.height=im.height;reportText=analyze(im);el.report.textContent=reportText;el.status.textContent='Original geladen: '+im.width+' × '+im.height+' px';render()};im.onerror=()=>{if(url!==src())return;el.status.textContent='Fehler beim Laden: '+url;el.report.textContent='PNG konnte nicht geladen werden.'};im.src=url}
+function tick(now){if(playing&&image){if(stamp){acc+=(now-stamp)/1000*+el.speed.value;const fps=META[el.anim.value][1],advance=Math.floor(acc*fps);if(advance){acc-=advance/fps;el.frame.value=(+el.frame.value+advance)%META[el.anim.value][0];render()}}}stamp=now;requestAnimationFrame(tick)}
+for(const k of ['dir','anim'])el[k].addEventListener('change',load);for(const k of ['frame','grid'])el[k].addEventListener('input',render);el.play.onclick=()=>{playing=!playing;acc=0;el.play.textContent=playing?'⏸ Pause':'▶ Abspielen'};el.step.onclick=()=>{playing=false;el.play.textContent='▶ Abspielen';el.frame.value=(+el.frame.value+1)%META[el.anim.value][0];render()};el.copy.onclick=async()=>{try{await navigator.clipboard.writeText(reportText);el.copy.textContent='✓ Kopiert'}catch{el.copy.textContent='Kopieren nicht verfügbar'}};load();requestAnimationFrame(tick);
+</script></body></html>
