@@ -3,15 +3,15 @@ const route=[[130,1370],[480,1370],[480,1080],[930,1080],[930,1350],[1500,1350],
 const dirs=['vorne','hinten','links','rechts'],motions={idle:[6,7],run:[8,11],attack:[8,12],hit:[4,8]};
 export class WorldScene extends Phaser.Scene{
 constructor(){super('WorldScene');this.touches=new Map();this.lastPinch=null;this.enemies=[];this.wave=0;this.lives=20;this.kills=0;this.spawns=0;this.nextSpawn=0;this.nextAttack=0;this.currentDir='vorne'}
-preload(){for(const d of dirs)for(const motion of Object.keys(motions))this.load.spritesheet(d+'_'+motion,'../../../assets/heroes/krieger/level1-v1/sheet_'+d+'_'+motion+'.png',{frameWidth:160,frameHeight:160});this.load.on('loaderror',f=>document.querySelector('#status').textContent='Ladefehler: '+f.key)}
+preload(){for(const d of dirs)for(const motion of Object.keys(motions))this.load.spritesheet(d+'_'+motion,'../../assets/heroes/krieger/level1-v1/sheet_'+d+'_'+motion+'.png',{frameWidth:160,frameHeight:160});this.load.on('loaderror',f=>document.querySelector('#status').textContent='Ladefehler: '+f.key)}
 create(){
 const g=this.add.graphics();g.fillStyle(0x31543a).fillRect(0,0,W,H);
 g.lineStyle(110,0x745a3d).beginPath();route.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.strokePath();
 g.lineStyle(83,0xc4a77b).beginPath();route.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.strokePath();
 g.fillStyle(0x1b3829);for(let i=0;i<90;i++){const x=(i*431+37)%W,y=(i*739+59)%H;if(route.some(([rx,ry])=>Math.hypot(rx-x,ry-y)<160))continue;g.fillCircle(x,y,25+(i%4)*9)}
 for(const d of dirs)for(const [motion,[frames,fps]]of Object.entries(motions))if(this.textures.exists(d+'_'+motion))this.anims.create({key:d+'_'+motion,frames:this.anims.generateFrameNumbers(d+'_'+motion,{start:0,end:frames-1}),frameRate:fps,repeat:motion==='attack'||motion==='hit'?0:-1});
-this.hero=this.add.sprite(750,950,'vorne_idle').setOrigin(.5,.9).setDepth(10).setScale(1.2);
-if(this.anims.exists('vorne_idle'))this.hero.play('vorne_idle');
+this.hero=this.add.sprite(750,950,this.textures.exists('vorne_idle')?'vorne_idle':'__MISSING').setOrigin(.5,.9).setDepth(10).setScale(1.2);
+if(this.anims.exists('vorne_idle'))this.hero.play('vorne_idle');else document.querySelector('#status').textContent='FEHLER: Kriegergrafik fehlt – Asset-Pfad prüfen';
 this.add.circle(750,895,190,0x89e9b3,.04).setStrokeStyle(2,0x89e9b3,.27).setDepth(1);
 this.cameras.main.setBounds(0,0,W,H);this.input.addPointer(2);
 this.input.on('pointerdown',p=>{this.touches.set(p.id,{x:p.x,y:p.y});this.lastPinch=null});
