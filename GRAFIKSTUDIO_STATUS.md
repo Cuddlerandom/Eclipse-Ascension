@@ -66,6 +66,13 @@ Dieser Standard gilt für die Vorbereitung neuer Exporte. Bestehende freigegeben
 - **Altbestand beachten:** Goblin V0.7 mit bereits vereinbartem Anker **(32,60)** bleibt als Original bestehen und darf nicht stillschweigend als V1.0 exportiert oder behandelt werden. Renderer-spezifische Anpassung oder gesondert freigegebene Exportvariante nötig.
 - Vor endgültiger Freigabe auf Transparenz, Kanten, Skalierung, Bodenposition und Darstellung im echten mobilen Browser prüfen.
 
+
+### Verbindliche Animationsregel – Betäubung durch Sprengmeister
+- **Nur Fernkampfhelden (Bogenschütze und Magier) können durch den Goblin-Sprengmeister betäubt werden.**
+- **Nahkampfhelden (aktuell Krieger) sind gegen diese Betäubung vollständig immun.** Der Sprengmeister wählt sie niemals als Bombenziel.
+- **Grafikwerkstatt: Für Nahkampfhelden KEINE Betäubungs-/Stun-Animationsframes produzieren.** Solche Frames sind für die aktuelle Mechanik unnötig und nicht beauftragt.
+- Falls später andere Betäubungsquellen oder neue Regeln eingeführt werden, ist dafür eine gesonderte Freigabe erforderlich.
+
 ## Grafik-Pipeline und Zuständigkeiten
 1. **Grafikstudio 🎨:** Originaldesign, Animationen, Sprite-Sheets und Varianten; speichert Originaldateien in **Google Drive**; übergibt Asset-Version, Link, Dateiformat, Pixelgrösse, Transparenzstatus, Animationstiming und bekannte Einschränkungen.
 2. **Projektleiter 👑:** genehmigt das Aussehen und später die tatsächliche Spielansicht.
@@ -95,3 +102,5 @@ Dieser Standard gilt für die Vorbereitung neuer Exporte. Bestehende freigegeben
 - **2026-10-18:** Sprite-Exportstandard V1.0 für neue Exporte festgelegt: Goblins 128×160 / Anker (64,144); Helden 160×160 / Anker (80,144); sichtbare Zielgrössen, RGBA, Animationsmanifest und V0.7-Altbestand-Ausnahme. Renderer-Einbau und Browser-Test noch offen.
 
 - **2026-10-18 Schamane:** Goblin-Schamane im Gameplay integriert: 80 HP, Tempo 70, 30 Gold, Unterstützung; alle 5 Sekunden +30 HP für genau einen anderen verletzten Goblin im Radius 180, Priorität niedrigster HP-Prozentsatz, keine Selbstheilung, keine Überheilung. Ab Welle 1 testbar. Vorläufiger visueller Platzhalter, keine Originalgrafik-Freigabe. Commit 58c82af; Browser-Test ausstehend.
+
+- **2026-10-18:** Animationsregel verbindlich präzisiert: Sprengmeister betäubt ausschliesslich Fernkämpfer; Krieger/Nahkämpfer immun. Keine Stun-Frames für Nahkämpfer produzieren.
