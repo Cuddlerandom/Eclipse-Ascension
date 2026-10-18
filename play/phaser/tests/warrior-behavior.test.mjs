@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import { warriorTarget,warriorStep,warriorDirection } from '../src/combat/WarriorBehavior.js';
+const home={x:100,y:100},hero={x:100,y:100};
+const near={x:160,y:45,hp:25},dead={x:110,y:45,hp:0},far={x:500,y:45,hp:25};
+assert.equal(warriorTarget(home,hero,[dead,near,far]),near);
+assert.equal(warriorTarget(home,hero,[dead,far]),null);
+const chase=warriorStep(hero,home,near,.1);
+assert.ok(chase.moving&&chase.x>100);
+const attack=warriorStep({x:160,y:100},home,near,.1);
+assert.equal(attack.attacking,true);
+const stunned=warriorStep(hero,home,near,.1,true);
+assert.deepEqual([stunned.x,stunned.y],[100,100]);
+const returning=warriorStep({x:300,y:100},home,null,1);
+assert.ok(returning.x<300&&returning.x>=100);
+assert.equal(warriorDirection(10,1),'rechts');
+assert.equal(warriorDirection(0,-10),'hinten');
+console.log('Warrior behaviour tests passed');
