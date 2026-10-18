@@ -8,5 +8,7 @@ for (let wave=1;wave<=100;wave++) {
   for(const [type,first] of Object.entries(UNLOCK_WAVES)) if(wave===first) assert.ok(roster.includes(type),'Missing debut '+type);
 }
 assert.deepEqual([...new Set(waveRoster(1))],['pluenderer']);
-assert.ok(waveEnemyCount(100)<=90);
+assert.equal(waveEnemyCount(1),10);
+assert.equal(waveEnemyCount(100),208);
+for(let wave=2;wave<=100;wave++) assert.equal(waveEnemyCount(wave)-waveEnemyCount(wave-1),2);
 console.log('100 wave roster tests passed');
