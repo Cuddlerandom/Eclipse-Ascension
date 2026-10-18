@@ -53,6 +53,19 @@ Es sind **sechs Goblinrollen** geplant. Nicht alle gleichzeitig zeichnen oder te
 
 **Achtung:** Für die übrigen drei Rollen enthält diese Statusdatei keine detaillierte Designfreigabe oder endgültige Mechanik. Bestehende Originalkonzepte der Gegnerwerkstatt haben Vorrang; nichts aus der Kurzbeschreibung als final interpretieren.
 
+
+## Technischer Sprite-Exportstandard V1.0 (18.10.2026)
+Dieser Standard gilt für die Vorbereitung neuer Exporte. Bestehende freigegebene Originalgrafiken bleiben unverändert; Altbestände nicht ohne Freigabe überschreiben. Der aktuelle Arena-Renderer nutzt noch Kreisplatzhalter und muss für PNGs angepasst werden.
+
+- Massstab: 1 Asset-Pixel = 1 Welteinheit bei Zoom 1.0; Kamera-Zoom im Renderer. Transparente RGBA-PNGs mit echtem Alphakanal, keine Schachbrett-Hintergründe, keine integrierten HP-Balken.
+- Alle Goblins: einheitliche Frame-Canvas **128 × 160 px**, Bodenanker **(64,144)** ab linker oberer Ecke. Sichtbare Zielgrössen inkl. Ausrüstung ungefähr: Plünderer 55×70, Späher 45×55, Schildträger 75×85, Bannerträger 60×105 (mit Fahne), Sprengmeister 60×75, Schamane 60×85 px.
+- Alle Helden: einheitliche Frame-Canvas **160 × 160 px**, Bodenanker **(80,144)**. Sichtbare Zielgrössen inkl. Ausrüstung ungefähr: Krieger 75×100, Bogenschütze 70×95, Magier 75×105 px.
+- Alle Frames einer Figur: gleiche Canvasgrösse, gleicher Bodenanker und identische Ausrichtung; keine automatischen Zuschnitte. Ausrüstung und Bewegungen müssen im Frame bleiben, sonst vorab technische Abstimmung.
+- Pro Animation Einzel-PNGs mit laufender Framezahl (z. B. idle_000.png, run_000.png, attack_000.png); optionale Sprite-Sheets. Framezahl und FPS im Manifest dokumentieren, noch nicht pauschal vorgegeben.
+- Manifest pro Figur mit Version, Abmessungen, Anker, sichtbarer Zielgrösse, Animationen, FPS und Transparenzstatus. Rendern über Fussanker, nicht Canvasmitte. Pixel-Art ohne Glättung (imageSmoothingEnabled=false), Kollisions-/Trefferzone unabhängig vom transparenten Canvas.
+- **Altbestand beachten:** Goblin V0.7 mit bereits vereinbartem Anker **(32,60)** bleibt als Original bestehen und darf nicht stillschweigend als V1.0 exportiert oder behandelt werden. Renderer-spezifische Anpassung oder gesondert freigegebene Exportvariante nötig.
+- Vor endgültiger Freigabe auf Transparenz, Kanten, Skalierung, Bodenposition und Darstellung im echten mobilen Browser prüfen.
+
 ## Grafik-Pipeline und Zuständigkeiten
 1. **Grafikstudio 🎨:** Originaldesign, Animationen, Sprite-Sheets und Varianten; speichert Originaldateien in **Google Drive**; übergibt Asset-Version, Link, Dateiformat, Pixelgrösse, Transparenzstatus, Animationstiming und bekannte Einschränkungen.
 2. **Projektleiter 👑:** genehmigt das Aussehen und später die tatsächliche Spielansicht.
@@ -78,3 +91,5 @@ Es sind **sechs Goblinrollen** geplant. Nicht alle gleichzeitig zeichnen oder te
 - **2026-10-18 V0.9:** Zielsystem neu: Nur Fernkämpfer wählen Gegnerklasse (Standard: Plünderer/Späher; Tank: Schildträger; Unterstützung: Bannerträger, später Schamane) und Zielauswahl (Erster/Letzter/Stärkster/Schwächster). Fehlt die Klasse in Reichweite, gilt die Zielauswahl für alle Gegner. Nahkämpfer haben keine manuellen Zielprioritäten: Nahkampf-KI bevorzugt Gegner in Schlagreichweite, hält laufende Kämpfe möglichst aufrecht, verteidigt den Abschnitt und bleibt im Wachradius. Umsetzung commit ed1028e, Browser-Endtest ausstehend.
 
 - **2026-10-18 V0.10:** Goblin-Sprengmeister als vorläufiger Gameplay-Platzhalter integriert (75 HP, Tempo 95, 25 Gold, Klasse Standard). Betäubungsbombe sucht ausschliesslich nächsten Fernkämpfer (Bogenschütze/Magier) in Radius 180; ein Held pro Wurf, 2 Sekunden Betäubung, 12 Sekunden Abklingzeit, danach 5 Sekunden zusätzlicher Betäubungsschutz. Keine Bomben auf Krieger, keine Flächenbetäubung, kein direkter Heldenschaden. Ab Welle 1 testbar. Freie Heldenplatzierung als spätere Änderung geplant. Commit 5e072d8, Browser-Endtest ausstehend.
+
+- **2026-10-18:** Sprite-Exportstandard V1.0 für neue Exporte festgelegt: Goblins 128×160 / Anker (64,144); Helden 160×160 / Anker (80,144); sichtbare Zielgrössen, RGBA, Animationsmanifest und V0.7-Altbestand-Ausnahme. Renderer-Einbau und Browser-Test noch offen.
