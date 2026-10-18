@@ -10,7 +10,7 @@ Diese Datei verbindet die technische Entwicklung der spielbaren Arena mit der Gr
 ## Aktueller Spielstand
 - Repository: `Cuddlerandom/Eclipse-Ascension` (**nicht** `Cuddlerandom/eclipse`).
 - Spielbare Arena: [Arena auf GitHub Pages](https://cuddlerandom.github.io/Eclipse-Ascension/play/arena-sandbox-user-layout.html).
-- Technischer Prototyp: **Gameplay V0.10**. Grafikplatzhalter sind vorübergehend; fertige freigegebene Originalgrafiken sollen nicht durch vereinfachte Neuentwürfe ersetzt werden.
+- Technischer Prototyp: **Gameplay V0.13**. Grafikplatzhalter sind vorübergehend; fertige freigegebene Originalgrafiken sollen nicht durch vereinfachte Neuentwürfe ersetzt werden.
 - Welt: 2400 × 1600 Welteinheiten, verschiebbare Kamera und Zoom auf Mobilgeräten, gewundener Gegnerweg, **freie Heldenplatzierung ohne feste Obergrenze**.
 - Verteidigung: 20 Startleben, 180 Startgold; 5 Wellen im derzeitigen Prototyp.
 - Prototyp V0.4: Krieger-Bewegung und Zielpriorisierung wurden vom Projektleiter auf dem iPhone als funktionierend bestätigt.
@@ -106,3 +106,5 @@ Dieser Standard gilt für die Vorbereitung neuer Exporte. Bestehende freigegeben
 - **2026-10-18:** Animationsregel verbindlich präzisiert: Sprengmeister betäubt ausschliesslich Fernkämpfer; Krieger/Nahkämpfer immun. Keine Stun-Frames für Nahkämpfer produzieren.
 
 - **2026-10-18 Gameplay V0.12:** Freie Heldenplatzierung umgesetzt: keine 12 festen Einsatzplätze und keine zahlenmässige Heldenobergrenze; Begrenzung durch Gold, Abstand zu Weg (mindestens 100 Welteinheiten von Weg-Mittellinie), andere gebaute Helden (mindestens 95 Einheiten Mittelpunktabstand) und Kartenrand. Antippen freier Fläche öffnet Heldenauswahl; gebaute Helden antippen für Upgrade/Zielauswahl. Krieger-Patrouille, Fernkämpfer und Goblinfähigkeiten bleiben erhalten. Commit 2a042e5; Browser-Test noch ausstehend. Für Grafikwerkstatt: keine zusätzlichen festen Heldenplatz-Assets mehr produzieren.
+
+- **2026-10-18 Gameplay V0.13 – Balancing C:** Baukosten steigen getrennt je Heldenklasse nach Anzahl bereits gebauter Helden dieser Klasse. Aufschläge für Held 1–5: 0 / +10 / +25 / +45 / +70 Gold; ab Held 6 jeweils weitere +30 Gold. Beispiele: Krieger 65/75/90/110/135, Bogenschütze 60/70/85/105/130, Magier 85/95/110/130/155. Freie Platzierung ohne Heldenlimit bleibt. Zukünftige Kontermechaniken gegen reine Kriegerarmeen sind **nur geplant**, noch nicht implementiert; Nahkämpfer bleiben gegen Sprengmeister-Betäubung immun, **keine Stun-Frames für Nahkämpfer**. Spielcommit d1f3177; Browser-Test ausstehend.
