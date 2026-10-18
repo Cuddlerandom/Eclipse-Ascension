@@ -2,7 +2,7 @@ name: Phaser combat regression tests
 on:
   push:
     branches:
-      - feature/phaser-combat-core-v1
+      - main
   pull_request:
     paths:
       - 'play/phaser/src/combat/**'
@@ -23,10 +23,13 @@ jobs:
           node --check play/phaser/src/scenes/WorldScene.js
           node --check play/phaser/src/combat/CombatCore.js
           node --check play/phaser/src/combat/GoblinAbilities.js
+          node --check play/phaser/src/combat/WaveConfig.js
       - name: Combat target, damage and cooldown tests
         run: node play/phaser/tests/combat-core.test.mjs
       - name: Goblin ability tests
         run: node play/phaser/tests/goblin-abilities.test.mjs
+      - name: Wave composition tests
+        run: node play/phaser/tests/wave-config.test.mjs
       - name: Install browser test dependencies
         run: |
           npm install --no-save playwright@1.56.1
