@@ -7,9 +7,9 @@ page.on('pageerror',e=>errors.push(e.message));
 page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 try {
  await page.goto('http://127.0.0.1:8765/play/phaser/',{waitUntil:'domcontentloaded'});
- await page.waitForFunction(()=>window.Phaser?.GAMES?.[0]?.scene?.getScene('WorldScene')?.sys?.isActive(),null,{timeout:45000}).catch(async e=>{console.log('Browser status:',await page.locator('#status').textContent().catch(()=>null));console.log('Browser errors:',errors);console.log('Loaded scripts:',await page.locator('script').evaluateAll(nodes=>nodes.map(n=>n.src)));await page.screenshot({path:'phaser-combat-smoke.png',fullPage:true});throw e});
+ await page.waitForFunction(()=>window.__eclipseGame?.scene?.getScene('WorldScene')?.sys?.isActive(),null,{timeout:45000}).catch(async e=>{console.log('Browser status:',await page.locator('#status').textContent().catch(()=>null));console.log('Browser errors:',errors);console.log('Loaded scripts:',await page.locator('script').evaluateAll(nodes=>nodes.map(n=>n.src)));await page.screenshot({path:'phaser-combat-smoke.png',fullPage:true});throw e});
  const result=await page.evaluate(()=>{
-  const s=Phaser.GAMES[0].scene.getScene('WorldScene');
+  const s=window.__eclipseGame.scene.getScene('WorldScene');
   s.gold=1000;
   s.pendingSpot={x:750,y:950};s.placeTower(1);
   s.pendingSpot={x:1100,y:950};s.placeTower(2);
