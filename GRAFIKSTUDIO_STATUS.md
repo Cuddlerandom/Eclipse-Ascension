@@ -10,11 +10,11 @@ Diese Datei verbindet die technische Entwicklung der spielbaren Arena mit der Gr
 ## Aktueller Spielstand
 - Repository: `Cuddlerandom/Eclipse-Ascension` (**nicht** `Cuddlerandom/eclipse`).
 - Spielbare Arena: [Arena auf GitHub Pages](https://cuddlerandom.github.io/Eclipse-Ascension/play/arena-sandbox-user-layout.html).
-- Technischer Prototyp: **Gameplay V0.8**. Grafikplatzhalter sind vorübergehend; fertige freigegebene Originalgrafiken sollen nicht durch vereinfachte Neuentwürfe ersetzt werden.
+- Technischer Prototyp: **Gameplay V0.9**. Grafikplatzhalter sind vorübergehend; fertige freigegebene Originalgrafiken sollen nicht durch vereinfachte Neuentwürfe ersetzt werden.
 - Welt: 2400 × 1600 Welteinheiten, verschiebbare Kamera und Zoom auf Mobilgeräten, gewundener Gegnerweg, **12 feste Helden-Einsatzpositionen**.
 - Verteidigung: 20 Startleben, 180 Startgold; 5 Wellen im derzeitigen Prototyp.
 - Prototyp V0.4: Krieger-Bewegung und Zielpriorisierung wurden vom Projektleiter auf dem iPhone als funktionierend bestätigt.
-- Prototyp V0.5: Goblin-Plünderer als Basistyp implementiert. **Gameplay V0.8:** Goblin-Späher und Schildträger integriert; Browser-Endtest V0.7 noch ausstehend.
+- Prototyp V0.5: Goblin-Plünderer als Basistyp implementiert. **Gameplay V0.9:** Goblin-Späher und Schildträger integriert; Browser-Endtest V0.7 noch ausstehend.
 
 ## Unsere drei spielbaren Helden
 | Held | Aufgabe / Verhalten | Basiswerte im aktuellen Prototyp |
@@ -46,8 +46,8 @@ Es sind **sechs Goblinrollen** geplant. Nicht alle gleichzeitig zeichnen oder te
 - **Gameplaywerte V0.6 vom Projektleiter bestätigt:** 55 HP, Tempo 155 Welteinheiten/s, 18 Gold Belohnung, 0 Rüstung, 1 Basisleben bei Durchbruch. Keine Spezialfähigkeit, keine Ausweichchance, elementar neutral. Im Prototyp bereits ab Welle 1 jeder dritte Spawn ein Späher; grüner Platzhalter ist kein finales Design.
 
 ### 3–6. Weitere geplante Rollen
-- **Schildträger:** robuster Tank. **Gameplay V0.8 vorläufig freigegeben:** 220 HP, Tempo 55, 25 % Reduktion physischer Treffer von Krieger/Bogenschütze, Magier ignoriert Rüstung, 25 Gold, 1 Basisleben bei Durchbruch. Keine weitere Spezialfähigkeit. In Welle 1 testbar. Die Werte sind bis zum Spieltest vorläufig.
-- **Bannerträger:** Unterstützer. **Gameplay V0.8 vorläufig:** 90 HP, Tempo 75, 22 Gold, 1 Basisleben bei Durchbruch; gewährt anderen Goblins im Umkreis 180 einen nicht stapelbaren +20-%-Geschwindigkeitsbonus, solange er lebt. Er selbst profitiert nicht. Der Bannerträger ist ab Welle 1 testbar. Werte sind vorläufige Testwerte, nicht separat als final freigegeben. Platzhalterflagge ist kein freigegebenes Grafikdesign.
+- **Schildträger:** robuster Tank. **Gameplay V0.9 vorläufig freigegeben:** 220 HP, Tempo 55, 25 % Reduktion physischer Treffer von Krieger/Bogenschütze, Magier ignoriert Rüstung, 25 Gold, 1 Basisleben bei Durchbruch. Keine weitere Spezialfähigkeit. In Welle 1 testbar. Die Werte sind bis zum Spieltest vorläufig.
+- **Bannerträger:** Unterstützer. **Gameplay V0.9 vorläufig:** 90 HP, Tempo 75, 22 Gold, 1 Basisleben bei Durchbruch; gewährt anderen Goblins im Umkreis 180 einen nicht stapelbaren +20-%-Geschwindigkeitsbonus, solange er lebt. Er selbst profitiert nicht. Der Bannerträger ist ab Welle 1 testbar. Werte sind vorläufige Testwerte, nicht separat als final freigegeben. Platzhalterflagge ist kein freigegebenes Grafikdesign.
 - **Sprengmeister:** Spezialist.
 - **Schamane:** magischer Unterstützer.
 
@@ -69,8 +69,10 @@ Es sind **sechs Goblinrollen** geplant. Nicht alle gleichzeitig zeichnen oder te
 ## Änderungsprotokoll
 - **2026-10-18:** Erste gemeinsame Status- und Übergabedatei erstellt. Gameplay V0.5, drei Helden, Zielprioritäten, Plünderer und nächster Späher-Schritt dokumentiert.
 
-- **2026-10-18:** Gameplay V0.8: Späher mit 55 HP / 155 Tempo / 18 Gold bestätigt und ab Welle 2 in die Arena integriert. Browser-Test steht aus.
+- **2026-10-18:** Gameplay V0.9: Späher mit 55 HP / 155 Tempo / 18 Gold bestätigt und ab Welle 2 in die Arena integriert. Browser-Test steht aus.
 
-- **2026-10-18:** Gameplay V0.8: Schildträger mit 220 HP / 55 Tempo / 25 % physischer Schadensreduktion / 25 Gold integriert. **Verbindliche Testregel:** Alle neu integrierten Gegnertypen erscheinen bereits in Welle 1, damit der Projektleiter sofort testen kann. Aktuell rotieren Plünderer, Späher und Schildträger ab dem ersten Spawn. Die Regel gilt für zukünftige neue Gegner in der Testphase; Wellenverteilung später separat balancieren.
+- **2026-10-18:** Gameplay V0.9: Schildträger mit 220 HP / 55 Tempo / 25 % physischer Schadensreduktion / 25 Gold integriert. **Verbindliche Testregel:** Alle neu integrierten Gegnertypen erscheinen bereits in Welle 1, damit der Projektleiter sofort testen kann. Aktuell rotieren Plünderer, Späher und Schildträger ab dem ersten Spawn. Die Regel gilt für zukünftige neue Gegner in der Testphase; Wellenverteilung später separat balancieren.
 
 - **2026-10-18:** V0.8: zwei individuelle Zielprioritäten je Held (Primär-/Ersatzpriorität), neue Option „Unterstützer“, Bannerträger mit temporärem +20-%-Geschwindigkeitsbuff (Radius 180). Ab Welle 1 rotieren Plünderer, Späher, Schildträger, Bannerträger. Bannerträger-Basiswerte sind vorläufig; Browser-Endtest ausstehend.
+
+- **2026-10-18 V0.9:** Zielsystem neu: Nur Fernkämpfer wählen Gegnerklasse (Standard: Plünderer/Späher; Tank: Schildträger; Unterstützung: Bannerträger, später Schamane) und Zielauswahl (Erster/Letzter/Stärkster/Schwächster). Fehlt die Klasse in Reichweite, gilt die Zielauswahl für alle Gegner. Nahkämpfer haben keine manuellen Zielprioritäten: Nahkampf-KI bevorzugt Gegner in Schlagreichweite, hält laufende Kämpfe möglichst aufrecht, verteidigt den Abschnitt und bleibt im Wachradius. Umsetzung commit ed1028e, Browser-Endtest ausstehend.
