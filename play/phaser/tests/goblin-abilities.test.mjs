@@ -1,0 +1,16 @@
+import { healingAction, stunAction, movementMultiplier } from '../src/combat/GoblinAbilities.js';
+import assert from 'node:assert/strict';
+const shaman={type:'schamane',x:0,y:0,hp:80,healAt:0};
+const wounded={type:'pluenderer',x:40,y:0,hp:40,maxHp:100};
+assert.equal(healingAction(shaman,[shaman,wounded],100).target,wounded);
+assert.equal(healingAction({...shaman,healAt:200},[wounded],100),null);
+assert.equal(healingAction(shaman,[shaman,{...wounded,x:300}],100),null);
+const bomber={type:'sprengmeister',x:0,y:0,hp:75,bombAt:0};
+const archer={kind:1,x:30,y:0,stunImmuneUntil:0};
+assert.equal(stunAction(bomber,[archer],100).target,archer);
+assert.equal(stunAction(bomber,[{...archer,stunImmuneUntil:200}],100),null);
+assert.equal(stunAction({...bomber,bombAt:200},[archer],100),null);
+assert.equal(movementMultiplier(wounded,[wounded,{type:'bannertraeger',x:0,y:0,hp:90}]),1.2);
+assert.equal(movementMultiplier(wounded,[wounded,{type:'bannertraeger',x:300,y:0,hp:90}]),1);
+assert.equal(movementMultiplier({type:'bannertraeger',x:0,y:0},[{type:'bannertraeger',x:0,y:0,hp:90}]),1);
+console.log('GoblinAbilities tests passed');
