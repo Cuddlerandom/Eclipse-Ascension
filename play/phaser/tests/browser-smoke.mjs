@@ -7,7 +7,7 @@ page.on('pageerror',e=>errors.push(e.message));
 page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 try {
  await page.goto('http://127.0.0.1:8765/play/phaser/',{waitUntil:'domcontentloaded'});
- await page.waitForFunction(()=>window.Phaser?.GAMES?.[0]?.scene?.getScene('WorldScene')?.sys?.isActive(),{timeout:45000});
+ await page.waitForFunction(()=>window.Phaser?.GAMES?.[0]?.scene?.getScene('WorldScene')?.sys?.isActive(),null,{timeout:45000}).catch(async e=>{console.log('Browser status:',await page.locator('#status').textContent().catch(()=>null));console.log('Browser errors:',errors);console.log('Loaded scripts:',await page.locator('script').evaluateAll(nodes=>nodes.map(n=>n.src)));await page.screenshot({path:'phaser-combat-smoke.png',fullPage:true});throw e});
  const result=await page.evaluate(()=>{
   const s=Phaser.GAMES[0].scene.getScene('WorldScene');
   s.gold=1000;
@@ -21,7 +21,6 @@ try {
   s.update(performance.now()+20000,16);
   if(!(e.hp<before))throw Error('Target fallback did not deal damage');
   const shaman={type:'schamane',x:760,y:1000,hp:80,maxHp:80,healAt:0};
-  const {healingAction}=s; // no internal access required; module tested separately
   return {heroes:s.towers.length,wave:s.wave,damage:before-e.hp,canvas:!!document.querySelector('canvas')};
  });
  assert.ok(result.canvas);
