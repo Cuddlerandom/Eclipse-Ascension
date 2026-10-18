@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {WARRIOR_SKILLS,warriorSkillTargets,warriorSkillReady} from '../src/combat/WarriorAbilities.js';
+const [cleave,guard,titan]=[WARRIOR_SKILLS.cleave,WARRIOR_SKILLS.guard,WARRIOR_SKILLS.titan];
+assert.equal(cleave.level,2);assert.equal(guard.level,4);assert.equal(titan.level,5);
+assert.ok(titan.baseDamage>cleave.baseDamage);
+assert.ok(titan.radius>guard.radius);
+assert.ok(titan.stunMs>guard.stunMs);
+assert.ok(titan.cooldown>guard.cooldown);
+const enemies=[{x:0,y:0,hp:100},{x:150,y:0,hp:100},{x:180,y:0,hp:100},{x:5,y:0,hp:0}];
+const targets=warriorSkillTargets(enemies,0,0,titan);
+assert.equal(targets.length,2);
+assert.equal(warriorSkillReady(4,30000,0,targets,titan),false);
+assert.equal(warriorSkillReady(5,30000,35000,targets,titan),false);
+assert.equal(warriorSkillReady(5,30000,0,targets,titan),true);
+console.log('Warrior abilities tests passed');
