@@ -10,11 +10,11 @@ Diese Datei verbindet die technische Entwicklung der spielbaren Arena mit der Gr
 ## Aktueller Spielstand
 - Repository: `Cuddlerandom/Eclipse-Ascension` (**nicht** `Cuddlerandom/eclipse`).
 - Spielbare Arena: [Arena auf GitHub Pages](https://cuddlerandom.github.io/Eclipse-Ascension/play/arena-sandbox-user-layout.html).
-- Technischer Prototyp: **Gameplay V0.6**. Grafikplatzhalter sind vorübergehend; fertige freigegebene Originalgrafiken sollen nicht durch vereinfachte Neuentwürfe ersetzt werden.
+- Technischer Prototyp: **Gameplay V0.7**. Grafikplatzhalter sind vorübergehend; fertige freigegebene Originalgrafiken sollen nicht durch vereinfachte Neuentwürfe ersetzt werden.
 - Welt: 2400 × 1600 Welteinheiten, verschiebbare Kamera und Zoom auf Mobilgeräten, gewundener Gegnerweg, **12 feste Helden-Einsatzpositionen**.
 - Verteidigung: 20 Startleben, 180 Startgold; 5 Wellen im derzeitigen Prototyp.
 - Prototyp V0.4: Krieger-Bewegung und Zielpriorisierung wurden vom Projektleiter auf dem iPhone als funktionierend bestätigt.
-- Prototyp V0.5: Goblin-Plünderer als Basistyp implementiert. **Gameplay V0.6:** Goblin-Späher ergänzt; Browser-Endtest V0.6 noch ausstehend.
+- Prototyp V0.5: Goblin-Plünderer als Basistyp implementiert. **Gameplay V0.7:** Goblin-Späher und Schildträger integriert; Browser-Endtest V0.7 noch ausstehend.
 
 ## Unsere drei spielbaren Helden
 | Held | Aufgabe / Verhalten | Basiswerte im aktuellen Prototyp |
@@ -43,15 +43,15 @@ Es sind **sechs Goblinrollen** geplant. Nicht alle gleichzeitig zeichnen oder te
 - Rolle: **flinker Läufer / reiner Sprinter**, klein und kompakt; wilder Stammesläufer; überdrehtes, wildes Gesicht; helles Limettengrün.
 - Sprintanimation: **grosse Sprungschritte**, zusätzliche Animation mit zufälliger Kombination.
 - **Elementar neutral**.
-- **Gameplaywerte V0.6 vom Projektleiter bestätigt:** 55 HP, Tempo 155 Welteinheiten/s, 18 Gold Belohnung, 0 Rüstung, 1 Basisleben bei Durchbruch. Keine Spezialfähigkeit, keine Ausweichchance, elementar neutral. Im Prototyp ab Welle 2 jeder dritte Spawn ein Späher; grüner Platzhalter ist kein finales Design.
+- **Gameplaywerte V0.6 vom Projektleiter bestätigt:** 55 HP, Tempo 155 Welteinheiten/s, 18 Gold Belohnung, 0 Rüstung, 1 Basisleben bei Durchbruch. Keine Spezialfähigkeit, keine Ausweichchance, elementar neutral. Im Prototyp bereits ab Welle 1 jeder dritte Spawn ein Späher; grüner Platzhalter ist kein finales Design.
 
 ### 3–6. Weitere geplante Rollen
-- **Schildträger:** robuster Tank.
+- **Schildträger:** robuster Tank. **Gameplay V0.7 vorläufig freigegeben:** 220 HP, Tempo 55, 25 % Reduktion physischer Treffer von Krieger/Bogenschütze, Magier ignoriert Rüstung, 25 Gold, 1 Basisleben bei Durchbruch. Keine weitere Spezialfähigkeit. In Welle 1 testbar. Die Werte sind bis zum Spieltest vorläufig.
 - **Bannerträger:** Unterstützer.
 - **Sprengmeister:** Spezialist.
 - **Schamane:** magischer Unterstützer.
 
-**Achtung:** Für diese vier Rollen enthält diese Statusdatei keine detaillierte Designfreigabe oder endgültige Mechanik. Bestehende Originalkonzepte der Gegnerwerkstatt haben Vorrang; nichts aus der Kurzbeschreibung als final interpretieren.
+**Achtung:** Für die übrigen drei Rollen enthält diese Statusdatei keine detaillierte Designfreigabe oder endgültige Mechanik. Bestehende Originalkonzepte der Gegnerwerkstatt haben Vorrang; nichts aus der Kurzbeschreibung als final interpretieren.
 
 ## Grafik-Pipeline und Zuständigkeiten
 1. **Grafikstudio 🎨:** Originaldesign, Animationen, Sprite-Sheets und Varianten; speichert Originaldateien in **Google Drive**; übergibt Asset-Version, Link, Dateiformat, Pixelgrösse, Transparenzstatus, Animationstiming und bekannte Einschränkungen.
@@ -62,11 +62,13 @@ Es sind **sechs Goblinrollen** geplant. Nicht alle gleichzeitig zeichnen oder te
 
 ## Nächste Schritte
 1. Plünderer V0.5 in der Arena vom Projektleiter testen lassen und gegebenenfalls Werte korrigieren.
-2. Goblin-Späher V0.6 in der Arena testen und Geschwindigkeit sowie Wellenmischung prüfen.
+2. Goblin-Späher und Schildträger V0.7 direkt ab Welle 1 in der Arena testen; Balancing und Wellenmischung prüfen.
 3. Fertige Originalgrafiken von Google Drive technisch prüfen und nach Freigabe im tatsächlichen Spielrenderer einsetzen.
 4. Diese Datei bei relevanten Änderungen aktualisieren; die Grafikwerkstatt liest sie **vor jeder neuen Designphase**.
 
 ## Änderungsprotokoll
 - **2026-10-18:** Erste gemeinsame Status- und Übergabedatei erstellt. Gameplay V0.5, drei Helden, Zielprioritäten, Plünderer und nächster Späher-Schritt dokumentiert.
 
-- **2026-10-18:** Gameplay V0.6: Späher mit 55 HP / 155 Tempo / 18 Gold bestätigt und ab Welle 2 in die Arena integriert. Browser-Test steht aus.
+- **2026-10-18:** Gameplay V0.7: Späher mit 55 HP / 155 Tempo / 18 Gold bestätigt und ab Welle 2 in die Arena integriert. Browser-Test steht aus.
+
+- **2026-10-18:** Gameplay V0.7: Schildträger mit 220 HP / 55 Tempo / 25 % physischer Schadensreduktion / 25 Gold integriert. **Verbindliche Testregel:** Alle neu integrierten Gegnertypen erscheinen bereits in Welle 1, damit der Projektleiter sofort testen kann. Aktuell rotieren Plünderer, Späher und Schildträger ab dem ersten Spawn. Die Regel gilt für zukünftige neue Gegner in der Testphase; Wellenverteilung später separat balancieren.
